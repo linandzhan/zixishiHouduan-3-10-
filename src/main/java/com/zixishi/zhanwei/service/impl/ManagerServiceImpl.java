@@ -59,6 +59,7 @@ public class ManagerServiceImpl implements ManagerService {
         for (Integer roleId : roleIds) {
             managerMapper.addRole(Long.parseLong(roleId.toString()),Long.parseLong(userId.toString()));
         }
+        System.out.println("分支测试");
 
 
         return RestResult.success();
