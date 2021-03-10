@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zixishi.zhanwei.mapper.TokenMapper">
+    <resultMap id="tokenMap" type="Area">
+        <id property="id" column="id"/>
+        <result property="token" column="token"/>
+        <result property="createTime" column="create_time"/>
+        <association property="account" column="account_id" javaType="account" select="getAccount">
+            <id property="id" column="id"/>
+            <result property="username" column="username"/>
+            <result property="password" column="password"/>
+            <result property="phone" column="phone"/>
+            <result property="role" column="role"/>
+        </association>
+    </resultMap>
+
+
+    <insert id="save" parameterType="token">
+        <selectKey resultType="Long" order="AFTER" keyProperty="id">
+            select last_insert_id()
+        </selectKey>
+        insert into token
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+        <if test="id != null">
+            id,
+        </if>
+        <if test="token != null">
+            token,
+        </if>
+        <if test="createTime != null">
+            create_time,
+        </if>
+        <if test="account != null">
+            account_id,
+        </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="token != null">
+                #{token},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="account != null">
+                #{account.id},
+            </if>
+        </trim>
+    </insert>
+
+
+    <select id="findByAccount" resultMap="tokenMap">
+
+    </select>
+
+
+    <select id="countByAccount" resultType="integer">
+        select count(*) from token where account_id = #{id}
+    </select>
+
+    <select id="findIdByAccount" resultType="Long">
+        select id from token where account_id = #{id}
+    </select>
+
+
+    <select id="findAccountByToken" resultType="Long">
+        select account_id from token where token = #{token}
+    </select>
+
+
+
+    <update id="update" parameterType="token">
+        update token
+        <set>
+            <if test="token != null">
+                token = #{token},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="account != null">
+                account_id = #{account.id},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+
+    <delete id="deleteToken" parameterType="long">
+        delete from token where account_id = #{accountId}
+    </delete>
+</mapper>

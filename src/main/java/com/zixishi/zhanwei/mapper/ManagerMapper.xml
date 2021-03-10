@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zixishi.zhanwei.mapper.ManagerMapper">
+    <resultMap id="managerMap" type="manager">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="createTime" column="create_time"/>
+        <result property="phone" column="phone"/>
+        <result property="enabled" column="enabled"/>
+        <result property="avator" column="avator"/>
+        <result property="description" column="description"/>
+    </resultMap>
+
+
+
+<!--    foreach批量处理-->
+    <update id="batchEnabled" parameterType="Long">
+        update manager set enabled = true where id in(
+            <foreach collection="idList" item="id" index="index" separator=",">
+                #{id}
+            </foreach>
+            )
+    </update>
+
+<!--    批量禁用-->
+    <update id="batchDisabled" parameterType="Long">
+        update manager set enabled = false where id in(
+        <foreach collection="idList" item="id" index="index" separator=",">
+            #{id}
+        </foreach>
+        )
+    </update>
+<!--    禁用管理员账号-->
+    <update id="disable" parameterType="long">
+        update manager set enabled = false where id = #{id}
+    </update>
+<!--    启用管理员账号-->
+    <update id="enable" parameterType="long">
+        update manager set enabled = true where id = #{id}
+    </update>
+
+<!--    模糊查询，搜索管理员列表-->
+<!--    id in (SELECT id FROM `account` where role = (select rolename from role where id=#{roleId}))-->
+    <select id="search" resultMap="managerMap">
+        select * from manager
+        <where>
+            <choose>
+                <when test="roleId != null and roleId != ''">
+                    id  in (SELECT id FROM `account` where role = (select rolename from role where id=#{roleId}))
+                </when>
+            </choose>
+        <if test="manager.username != null and manager.username != ''">
+            <bind name="pattern" value="'%' + manager.username + '%'"/>
+            and username like #{pattern}
+        </if>
+        <if test="manager.enabled != null">
+            and enabled = #{manager.enabled}
+        </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="long">
+        select count(1) from manager
+        <where>
+            <choose>
+                <when test="roleId != null and roleId != ''">
+                    id  in (SELECT id FROM `account` where role = (select rolename from role where id=#{roleId}))
+                </when>
+            </choose>
+            <if test="manager.username != null and manager.username != ''">
+                <bind name="pattern" value="'%' + manager.username + '%'"/>
+                and username like #{pattern}
+            </if>
+            <if test="manager.enabled != null">
+                and enabled = #{manager.enabled}
+            </if>
+        </where>
+    </select>
+
+    <select id="get" parameterType="long" resultMap="managerMap">
+        select * from manager where id = #{id}
+    </select>
+
+
+    <insert id="save">
+        insert into manager
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="manager.id != null">
+                id,
+            </if>
+            <if test="manager.username != null">
+                username,
+            </if>
+            <if test="manager.createTime != null">
+                create_time,
+            </if>
+            <if test="manager.phone != null">
+                phone,
+            </if>
+            <if test="manager.enabled != null">
+                enabled,
+            </if>
+            <if test="manager.avator != null">
+                avator,
+            </if>
+            <if test="manager.description != null">
+                description,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="manager.id != null">
+                #{manager.id},
+            </if>
+            <if test="manager.username != null">
+                #{manager.username},
+            </if>
+            <if test="manager.createTime != null">
+                #{manager.createTime},
+            </if>
+            <if test="manager.phone != null">
+                #{manager.phone},
+            </if>
+            <if test="manager.enabled != null">
+                #{manager.enabled},
+            </if>
+            <if test="manager.avator != null">
+                #{manager.avator},
+            </if>
+            <if test="manager.description != null">
+                #{manager.description},
+            </if>
+        </trim>
+    </insert>
+
+
+
+    <insert id="addRole">
+        insert into account_role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                account_id,
+            </if>
+            <if test="roleId != null">
+                role_id,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="roleId != null">
+                #{roleId},
+            </if>
+        </trim>
+    </insert>
+</mapper>

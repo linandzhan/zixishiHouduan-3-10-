@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zixishi.zhanwei.mapper.RoleMapper">
+<select id="search" resultType="role">
+    select * from role where rolename != '用户';
+</select>
+
+
+
+    <select id="searchRole" resultType="role">
+        select * from role
+        <where>
+            <if test="roleName != null and roleName != ''">
+                <bind name="pattern" value="'%' + roleName + '%'"/>
+                and rolename like #{pattern}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="count" resultType="long">
+        select count(*) from role
+        <where>
+            <if test="roleName != null and roleName != ''">
+                <bind name="pattern" value="'%' + roleName + '%'"/>
+                and rolename like #{pattern}
+            </if>
+        </where>
+    </select>
+
+
+
+</mapper>

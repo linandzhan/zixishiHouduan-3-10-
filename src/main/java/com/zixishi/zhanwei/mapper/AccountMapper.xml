@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zixishi.zhanwei.mapper.AccountMapper">
+
+
+
+    <select id="findOne" resultType="account">
+            select * from account where id = #{id};
+     </select>
+
+    <select id="findByUsername" resultType="account">
+            select * from account where username = #{username};
+     </select>
+
+
+
+    <insert id="save" parameterType="account">
+        insert into account
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="username != null">
+                #{username},
+            </if>
+            <if test="password != null">
+                #{password},
+            </if>
+            <if test="phone != null">
+                #{phone},
+            </if>
+        </trim>
+        <selectKey resultType="Long" order="AFTER" keyProperty="id">
+            select last_insert_id()
+        </selectKey>
+    </insert>
+
+
+    <insert id="bind">
+        insert into account_role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+        <if test="account != null">
+            account_id,
+        </if>
+        <if test="role != null">
+            role_id,
+        </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+        <if test="account != null">
+            #{account.id},
+        </if>
+        <if test="role != null">
+            #{role.id},
+        </if>
+        </trim>
+    </insert>
+
+
+    <select id="findRoleByAccount" resultType="role">
+        select * from role where id in (select role_id from account_role where account_id = #{id})
+    </select>
+
+
+    <delete id="deleteByRoles" parameterType="long">
+        delete from account_role   where account_id = #{accountId}
+    </delete>
+</mapper>
