@@ -14,4 +14,8 @@ public interface RoleMapper {
     List<Role> searchRole(String roleName, Pageable pageable);
 
     Long count(String roleName, Pageable pageable);
+
+    void save(Role role);
+
+    void delete(Long id);
 }

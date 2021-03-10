@@ -81,4 +81,19 @@
     <delete id="deleteByRoles" parameterType="long">
         delete from account_role   where account_id = #{accountId}
     </delete>
+
+
+
+    <update id="update" parameterType="account">
+        update account
+        <set>
+            <if test="username != null">
+                username = #{username},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
 </mapper>

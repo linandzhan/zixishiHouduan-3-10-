@@ -155,4 +155,30 @@
             </if>
         </trim>
     </insert>
+
+
+    <update id="update" parameterType="manager">
+        update manager
+        <set>
+            <if test="username != null">
+                username = #{username},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="enabled != null">
+                enabled = #{enabled},
+            </if>
+            <if test="avator != null">
+                avator = #{avator},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
 </mapper>

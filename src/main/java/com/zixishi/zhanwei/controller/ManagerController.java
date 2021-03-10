@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Api(tags = "管理员管理")
@@ -38,6 +39,8 @@ public class ManagerController {
     private ManagerService managerService;
     @Resource
     private AccountService accountService;
+    @Resource
+    private AccountMapper accountMapper;
 
     /**
      * 获取单个Manager信息
@@ -210,4 +213,31 @@ public class ManagerController {
 
         return managerService.addRole(roleIds,userId);
     }
+
+
+    /**
+     * 编辑管理员
+     * @return
+     */
+    @Authorization
+    @ApiOperation(value = "编辑管理员")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
+    })
+    @PostMapping("/manager/update")
+    public RestResult update(@RequestBody Map<String,Manager> managerMap) {
+        System.out.println(managerMap);
+        Manager manager = managerMap.get("manager");
+
+//        System.out.println(jsonObject);
+//        Integer id = (Integer) jsonObject.get("id");
+
+        Account account = new Account();
+        account.setPhone(manager.getPhone());
+        account.setUsername(manager.getUsername());
+        accountMapper.update(account);
+        managerMapper.update(manager);
+        return RestResult.success("编辑成功");
+    }
+
 }

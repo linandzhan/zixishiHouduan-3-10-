@@ -20,4 +20,6 @@ public interface AccountMapper {
     List<Role> findRoleByAccount(Long id);
 
     void deleteByRoles(Long accountId);
+
+    void update(Account account);
 }

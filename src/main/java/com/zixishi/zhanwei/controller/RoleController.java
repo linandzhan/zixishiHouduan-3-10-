@@ -19,6 +19,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Api(tags = "角色管理")
@@ -81,7 +82,40 @@ public class RoleController {
         return roleService.searchRole(roleName,p);
     }
 
+    /**
+     * 角色列表查询
+     * @return
+     */
+    @Authorization
+    @ApiOperation(value = "新增角色")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
+    })
+    @PostMapping("/role/save")
+    public RestResult save(@RequestBody Map<String,Role> roleMap) {
+        System.out.println(roleMap);
+        Role role = roleMap.get("role");
+        roleMapper.save(role);
+        return  RestResult.success("新增角色成功");
+    }
 
+
+    /**
+     * 角色列表查询
+     * @return
+     */
+    @Authorization
+    @ApiOperation(value = "删除角色")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
+    })
+    @PostMapping("/role/delete")
+    public RestResult delete(@RequestBody JSONObject jsonObject) {
+        System.out.println(jsonObject);
+        Integer id = (Integer) jsonObject.get("id");
+        roleMapper.delete(Long.parseLong(id.toString()));
+        return RestResult.success("删除成功");
+    }
 
 
 

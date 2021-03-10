@@ -28,6 +28,40 @@
         </where>
     </select>
 
+    <insert id="save" parameterType="role">
+        <selectKey resultType="Long" order="AFTER" keyProperty="id">
+            select last_insert_id()
+        </selectKey>
+        insert into role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="rolename != null">
+                rolename,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="rolename != null">
+                #{rolename},
+            </if>
+            <if test="description != null">
+                #{description},
+            </if>
+        </trim>
+    </insert>
+
+
+    <delete id="delete" parameterType="long">
+        delete from role where id = #{id}
+    </delete>
 
 
 </mapper>

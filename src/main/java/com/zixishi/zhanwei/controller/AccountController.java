@@ -7,12 +7,12 @@ import com.zixishi.zhanwei.config.authorization.annotation.RequiredPermission;
 import com.zixishi.zhanwei.config.authorization.token.TokenManager;
 import com.zixishi.zhanwei.config.authorization.token.TokenModel;
 import com.zixishi.zhanwei.dto.LoginDTO;
+import com.zixishi.zhanwei.mapper.AccountMapper;
 import com.zixishi.zhanwei.mapper.AreaMapper;
+import com.zixishi.zhanwei.mapper.ManagerMapper;
 import com.zixishi.zhanwei.mapper.PackageMapper;
-import com.zixishi.zhanwei.model.Account;
-import com.zixishi.zhanwei.model.Area;
+import com.zixishi.zhanwei.model.*;
 import com.zixishi.zhanwei.model.Package;
-import com.zixishi.zhanwei.model.Role;
 import com.zixishi.zhanwei.service.AccountService;
 import com.zixishi.zhanwei.util.Constants;
 import com.zixishi.zhanwei.util.RestResult;
@@ -42,6 +42,8 @@ public class AccountController {
     private AreaMapper areaMapper;
     @Resource
     private PackageMapper packageMapper;
+    @Resource
+    private ManagerMapper managerMapper;
 
 
     @ApiOperation(value = "用户登录接口")
@@ -53,6 +55,10 @@ public class AccountController {
         Account account = accountService.findByUsername(username);
         if(account != null && !account.getPassword().equals(password)) {
             return RestResult.error("密码错误或者账号未注册");
+        }
+        Manager manager = managerMapper.get(account.getId());
+        if(manager.getEnabled() == false) {
+            return RestResult.error("该账户已被禁用，请联系管理员");
         }
         TokenModel model = tokenManager.createToken(account.getId());
         LoginDTO loginDTO = new LoginDTO();

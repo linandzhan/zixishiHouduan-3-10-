@@ -27,4 +27,6 @@ public interface ManagerMapper {
     void save(Map map);
 
     void addRole(Long roleId, Long userId);
+
+    void update(Manager manager);
 }
