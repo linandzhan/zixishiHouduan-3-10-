@@ -18,11 +18,7 @@ public class Area {
 
     private String image;
     /**
-     * 该区域下有什么套餐
+     * 该区域下有什么座位
      */
-    private List<Package> packageList;
-    /**
-     * 该区域下有哪些描述
-     */
-    private List<AreaDetail> areaDetailList;
+    private List<Seat> seatList;
 }

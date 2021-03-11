@@ -17,7 +17,7 @@
         <where>
             <if test="phone != null and phone != ''">
                 <bind name="pattern" value="'%' + phone + '%'"/>
-                and username like #{pattern}
+                and phone like #{pattern}
             </if>
             <if test="username != null">
                 <bind name="pattern" value="'%' + username + '%'"/>
@@ -40,4 +40,51 @@
         </where>
     </select>
 
+    <update id="updateBalance" parameterType="user">
+        update user set balance = #{balance} where id = #{id}
+    </update>
+
+
+    <select id="find" resultMap="userMap">
+        select * from user where id = #{id}
+    </select>
+
+    <insert id="save" parameterType="user">
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="username != null">
+                username,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="balance != null">
+                balance,
+            </if>
+            <if test="gender != null">
+                gender,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="username != null">
+                #{username},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="phone != null">
+                #{phone},
+            </if>
+            <if test="balance!= null">
+                #{balance},
+            </if>
+            <if test="gender!= null">
+                #{gender},
+            </if>
+        </trim>
+    </insert>
 </mapper>

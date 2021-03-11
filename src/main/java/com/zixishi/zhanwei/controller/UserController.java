@@ -4,6 +4,8 @@ package com.zixishi.zhanwei.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.zixishi.zhanwei.config.authorization.annotation.Authorization;
 import com.zixishi.zhanwei.config.authorization.annotation.RequiredPermission;
+import com.zixishi.zhanwei.mapper.UserMapper;
+import com.zixishi.zhanwei.model.User;
 import com.zixishi.zhanwei.service.UserService;
 import com.zixishi.zhanwei.util.Pageable;
 import com.zixishi.zhanwei.util.RestResult;
@@ -25,7 +27,8 @@ import java.util.Map;
 public class UserController {
     @Resource
     private UserService userService;
-
+    @Resource
+    private UserMapper userMapper;
 
     /**
      * 用户查询（search)
@@ -71,7 +74,34 @@ public class UserController {
     })
     @PostMapping("/user/recharge")
     public RestResult recharge(@RequestBody JSONObject jsonObject) {
-        System.out.println(jsonObject);
-        return null;
+        Integer id = (Integer) jsonObject.get("id");
+        String rechargeMoney = (String) jsonObject.get("rechargeMoney");
+        User user = new User();
+        user.setId(Long.parseLong(id.toString()));
+        User attach = userService.attach(Long.parseLong(id.toString()));
+        user.setBalance(attach.getBalance()+Double.parseDouble(rechargeMoney));
+
+        userMapper.updateBalance(user);
+
+        return RestResult.success("已成功充值");
     }
+
+
+
+    /**
+     * 新增用户（save)
+     * @param
+     */
+    @Authorization
+    @ApiOperation(value = "新增用户")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
+    })
+    @PostMapping("/user/save")
+    public RestResult save(@RequestBody Map<String,User> userMap) {
+        User user = userMap.get("user");
+       userService.save(user);
+        return RestResult.success("新增成功");
+    }
+
 }

@@ -9,4 +9,10 @@ public interface UserMapper {
     List<User> search(String phone, String username);
 
     Long count(String phone, String username);
+
+    void updateBalance(User user);
+
+    User find(Long id);
+
+    void save(User user);
 }

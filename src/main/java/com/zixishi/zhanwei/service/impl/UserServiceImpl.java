@@ -11,6 +11,7 @@ import com.zixishi.zhanwei.util.RestResult;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
@@ -27,5 +28,16 @@ public class UserServiceImpl implements UserService {
         listDTO.setTotal(total);
 
         return RestResult.success(listDTO);
+    }
+
+
+    public User attach(Long id) {
+        return userMapper.find(id);
+    }
+
+    @Override
+    public void save(User user) {
+        user.setCreateTime(LocalDateTime.now());
+        userMapper.save(user);
     }
 }

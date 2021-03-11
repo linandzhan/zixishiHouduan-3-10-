@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zixishi.zhanwei.mapper.ReservationMapper">
+    <resultMap id="reservationMap" type="Reservation">
+        <id property="id" column="id"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="date" column="date"/>
+        <association property="seat" column="seat_id" javaType="seat" select="getSeat">
+            <id property="id" column="id"/>
+            <result property="enabled" column="enabled"/>
+            <result property="seatName" column="seat_name"/>
+        </association>
+        <association property="user" column="user_id" javaType="user" select="getUser">
+            <id property="id" column="id"/>
+            <result property="username" column="usernmae"/>
+            <result property="phone" column="phone"/>
+            <result property="avator" column="avator"/>
+            <result property="createTime" column="create_time"/>
+            <result property="gender" column="gender"/>
+            <result property="balance" column="balance"/>
+        </association>
+    </resultMap>
+
+    <select id="getSeat" resultType="seat">
+        select * from seat where id = #{id}
+    </select>
+    <select id="getUser" resultType="user">
+        select * from user where id = #{id}
+    </select>
+
+    <select id="searchNow" resultMap="reservationMap">
+        SELECT * FROM `reservation` where start_time &lt; now()  and end_time &gt; now()
+    </select>
+</mapper>

@@ -11,4 +11,6 @@ public interface AreaMapper {
     public Area findOne(Long id);
 
     List<Area> findAreaListByPackage(Long id);
+
+    List<Area> search();
 }

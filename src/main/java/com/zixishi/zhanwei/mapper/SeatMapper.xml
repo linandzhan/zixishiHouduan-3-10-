@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zixishi.zhanwei.mapper.SeatMapper">
+    <resultMap id="seatMap" type="seat">
+        <id property="id" column="id"/>
+        <result property="enabled" column="enabled"/>
+        <result property="seatName" column="seat_name"/>
+        <association property="area" column="area_id" javaType="area" select="getArea">
+            <id property="id" column="id"/>
+            <result property="name" column="name"/>
+            <result property="amount" column="amount"/>
+            <result property="image" column="image"/>
+        </association>
+    </resultMap>
+
+    <select id="getArea" resultType="area">
+        select * from area where id = #{area.id}
+    </select>
+
+
+    <select id="findSeatByArea" resultMap="seatMap">
+        select * from seat where area_id = #{id}
+    </select>
+
+    <select id="search" resultMap="seatMap">
+        select * from seat
+    </select>
+</mapper>

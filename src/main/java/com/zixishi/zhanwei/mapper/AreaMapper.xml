@@ -6,10 +6,13 @@
         <result property="name" column="name"/>
         <result property="amount" column="amount"/>
         <result property="image" column="image"/>
+        <collection property="seatList" ofType="seat" select="com.zixishi.zhanwei.mapper.SeatMapper.findSeatByArea"  column="id">
+        </collection>
     </resultMap>
 
-
-
+<!--    <select id="findSeat" resultType="seat">-->
+<!--        select * from seat where area_id = #{id}-->
+<!--    </select>-->
 
 
     <select id="findOne" resultMap="areaMap">
@@ -19,6 +22,10 @@
 
     <select id="findAreaListByPackage" resultMap="areaMap">
         select area.* from area left join area_package ap on ap.area_id = area.id and ap.package_id = #{id}
+    </select>
+
+    <select id="search" resultMap="areaMap">
+        select * from area
     </select>
 
 </mapper>
