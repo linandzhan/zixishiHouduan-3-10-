@@ -32,4 +32,8 @@
     <select id="searchNow" resultMap="reservationMap">
         SELECT * FROM `reservation` where start_time &lt; now()  and end_time &gt; now()
     </select>
+
+    <select id="searchByDate" resultMap="reservationMap">
+         SELECT * FROM `reservation` where start_time &lt; #{time}  and end_time &gt; #{time}
+    </select>
 </mapper>

@@ -17,4 +17,6 @@ public class SeatServiceImpl implements SeatService {
     public List<Seat> search() {
         return seatMapper.search();
     }
+
+
 }

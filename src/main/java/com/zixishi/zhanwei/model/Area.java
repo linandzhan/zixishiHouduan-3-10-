@@ -14,7 +14,7 @@ public class Area {
 
     private String name;
 
-    private Integer amount;
+    private Double amount;
 
     private String image;
     /**

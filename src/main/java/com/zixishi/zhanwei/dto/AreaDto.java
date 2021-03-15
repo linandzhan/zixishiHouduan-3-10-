@@ -12,6 +12,18 @@ public class AreaDto {
 
    private String areaName;
 
+   /**
+    * 该区域的价格
+    */
+   private Double amount;
 
    private List<SeatDTO> seatDTO;
+   /**
+    * 座位总数
+    */
+   private Integer totalSeat;
+   /**
+    * 剩余座位
+    */
+   private Integer remainingSeat;
 }
