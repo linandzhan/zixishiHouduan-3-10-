@@ -28,4 +28,7 @@ public class User {
     private List<PackageBalance> packageBalanceList;
 
     private Double balance;
+
+
+    private String password;
 }

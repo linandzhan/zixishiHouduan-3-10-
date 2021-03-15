@@ -2,6 +2,7 @@ package com.zixishi.zhanwei.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zixishi.zhanwei.config.authorization.annotation.Authorization;
+import com.zixishi.zhanwei.config.authorization.annotation.RolePermission;
 import com.zixishi.zhanwei.mapper.RoleMapper;
 import com.zixishi.zhanwei.model.Role;
 import com.zixishi.zhanwei.service.RoleService;
@@ -39,6 +40,7 @@ public class RoleController {
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
     @PostMapping("/role/search")
+    @RolePermission(value = {"超级管理员","管理员"})
     public RestResult search(@RequestBody JSONObject jsonObject) {
         System.out.println(jsonObject);
         LinkedHashMap role = (LinkedHashMap) jsonObject.get("role");
@@ -65,6 +67,7 @@ public class RoleController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
+    @RolePermission(value = {"超级管理员","管理员"})
     @PostMapping("/role/searchRole")
     public RestResult searchRole(@RequestBody JSONObject jsonObject) {
 
@@ -92,6 +95,7 @@ public class RoleController {
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
     @PostMapping("/role/save")
+    @RolePermission(value = {"超级管理员"})
     public RestResult save(@RequestBody Map<String,Role> roleMap) {
         System.out.println(roleMap);
         Role role = roleMap.get("role");
@@ -110,6 +114,7 @@ public class RoleController {
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
     @PostMapping("/role/delete")
+    @RolePermission(value = {"超级管理员"})
     public RestResult delete(@RequestBody JSONObject jsonObject) {
         System.out.println(jsonObject);
         Integer id = (Integer) jsonObject.get("id");

@@ -15,4 +15,6 @@ public interface UserMapper {
     User find(Long id);
 
     void save(User user);
+
+    User get(Long id);
 }

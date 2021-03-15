@@ -103,12 +103,12 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
                 requiredPermission = method.getDeclaringClass().getAnnotation(RequiredPermission.class);
             }
             // 如果注解为null, 说明不需要拦截, 直接放过
-            if (requiredPermission == null) {
-                return true;
-            }
+//            if (requiredPermission == null) {
+//                return true;
+//            }
 
             // 如果标记了注解，则判断权限
-            if (StringUtils.isNotBlank(requiredPermission.value())) {
+      //      if (StringUtils.isNotBlank(requiredPermission.value())) {
                 String path = request.getRequestURI();
                 Boolean free = permissionService.findByPath(path);
                 if(free) {
@@ -121,9 +121,9 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
                 if(CollectionUtils.isEmpty(permissionSet)) {
                     return  false;
                 }
-                return permissionSet.contains(requiredPermission.value());
-            }
-        return true;
+                return permissionSet.contains(path);
+    //        }
+//        return true;
     }
 
 

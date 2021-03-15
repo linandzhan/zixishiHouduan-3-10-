@@ -29,6 +29,9 @@
             <if test="phone != null">
                 phone,
             </if>
+            <if test="role != null">
+                role,
+            </if>
         </trim>
 
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -43,6 +46,9 @@
             </if>
             <if test="phone != null">
                 #{phone},
+            </if>
+            <if test="role != null">
+                #{role},
             </if>
         </trim>
         <selectKey resultType="Long" order="AFTER" keyProperty="id">

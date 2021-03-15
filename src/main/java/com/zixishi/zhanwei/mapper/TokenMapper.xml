@@ -53,7 +53,7 @@
 
 
     <select id="findByAccount" resultMap="tokenMap">
-
+        select * from token where account_id = #{id}
     </select>
 
 

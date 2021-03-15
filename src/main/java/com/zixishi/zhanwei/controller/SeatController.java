@@ -1,6 +1,7 @@
 package com.zixishi.zhanwei.controller;
 
 import com.zixishi.zhanwei.config.authorization.annotation.Authorization;
+import com.zixishi.zhanwei.config.authorization.annotation.RolePermission;
 import com.zixishi.zhanwei.dto.AreaDto;
 import com.zixishi.zhanwei.dto.SeatDTO;
 import com.zixishi.zhanwei.model.Area;
@@ -41,6 +42,7 @@ public class SeatController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
+    @RolePermission(value = {"超级管理员","管理员","用户"})
     @PostMapping("/seat/search")
     public RestResult search() {
         List<Area> areas = areaService.search();
@@ -84,4 +86,6 @@ public class SeatController {
         return RestResult.success(myResult);
 
     }
+
+
 }

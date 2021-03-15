@@ -9,6 +9,7 @@
         <result property="createTime" column="create_time"/>
         <result property="gender" column="gender"/>
         <result property="balance" column="balance"/>
+        <result property="password" column="password"/>
     </resultMap>
 
 
@@ -52,6 +53,9 @@
     <insert id="save" parameterType="user">
         insert into user
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
             <if test="username != null">
                 username,
             </if>
@@ -70,6 +74,9 @@
         </trim>
 
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
             <if test="username != null">
                 #{username},
             </if>
@@ -87,4 +94,9 @@
             </if>
         </trim>
     </insert>
+
+
+    <select id="get" resultMap="userMap">
+        select * from user where id = #{id}
+    </select>
 </mapper>

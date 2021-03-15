@@ -14,11 +14,43 @@
             select free from permission where path = #{path};
      </select>
 
-    <select id="searchPath" resultType="string">
-        select path from permission
+    <select id="searchPath" resultType="permission">
+        select * from permission
     </select>
 
     <insert id="save">
         insert into permission (id,path,free) values (null,#{path},1)
     </insert>
+
+
+    <insert id="bind">
+        insert into role_permission
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="role != null">
+                role_id,
+            </if>
+            <if test="permission != null">
+                permission_id,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="role != null">
+                #{role.id},
+            </if>
+            <if test="permission != null">
+                #{permission.id},
+            </if>
+        </trim>
+    </insert>
+
+
+    <select id="searchByRole" resultType="permission">
+        select * from permission where id in (select permission_id from role_permission where role_id = #{id})
+    </select>
+
+
+    <select id="attach" resultType="permission">
+        select * from permission where path = #{path}
+    </select>
 </mapper>

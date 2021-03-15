@@ -4,6 +4,8 @@ package com.zixishi.zhanwei.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.zixishi.zhanwei.config.authorization.annotation.Authorization;
 import com.zixishi.zhanwei.config.authorization.annotation.RequiredPermission;
+import com.zixishi.zhanwei.config.authorization.annotation.RolePermission;
+import com.zixishi.zhanwei.mapper.AccountMapper;
 import com.zixishi.zhanwei.mapper.UserMapper;
 import com.zixishi.zhanwei.model.User;
 import com.zixishi.zhanwei.service.UserService;
@@ -30,6 +32,7 @@ public class UserController {
     @Resource
     private UserMapper userMapper;
 
+
     /**
      * 用户查询（search)
      * @param
@@ -40,6 +43,8 @@ public class UserController {
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
     @PostMapping("/user/search")
+    //23
+    @RolePermission(value = {"超级管理员","管理员"})
     public RestResult search(@RequestBody JSONObject jsonObject) {
         LinkedHashMap pageableMap = (LinkedHashMap) jsonObject.get("pageable");
         Integer page = (Integer) pageableMap.get("page");
@@ -73,6 +78,7 @@ public class UserController {
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
     @PostMapping("/user/recharge")
+    @RolePermission(value = {"超级管理员","管理员"})
     public RestResult recharge(@RequestBody JSONObject jsonObject) {
         Integer id = (Integer) jsonObject.get("id");
         String rechargeMoney = (String) jsonObject.get("rechargeMoney");
@@ -98,8 +104,10 @@ public class UserController {
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
     @PostMapping("/user/save")
+    @RolePermission(value = {"超级管理员","管理员"})
     public RestResult save(@RequestBody Map<String,User> userMap) {
         User user = userMap.get("user");
+
        userService.save(user);
         return RestResult.success("新增成功");
     }

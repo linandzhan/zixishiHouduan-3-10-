@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 
 import com.zixishi.zhanwei.config.authorization.annotation.Authorization;
 import com.zixishi.zhanwei.config.authorization.annotation.RequiredPermission;
+import com.zixishi.zhanwei.config.authorization.annotation.RolePermission;
 import com.zixishi.zhanwei.mapper.AccountMapper;
 import com.zixishi.zhanwei.mapper.ManagerMapper;
 import com.zixishi.zhanwei.model.Account;
@@ -52,7 +53,7 @@ public class ManagerController {
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
     @PostMapping("/manager/get")
-    @RequiredPermission("/manager/get")
+    @RolePermission(value = {"管理员","超级管理员","用户"})
     public  RestResult get(@RequestBody  JSONObject jsonObject) {
         String str = (String) jsonObject.get("id");
         Long id = Long.parseLong(str);
@@ -71,7 +72,7 @@ public class ManagerController {
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
     @PostMapping("/manager/batchEnabled")
-    @RequiredPermission("/manager/batchEnabled")
+    @RolePermission(value = {"超级管理员"})
     public RestResult batchEnabled(@RequestBody List<Long> idList) {
         managerMapper.batchEnabled(idList);
         return RestResult.success("启用成功");
@@ -89,7 +90,7 @@ public class ManagerController {
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
     @PostMapping("/manager/batchDisabled")
-    @RequiredPermission("/manager/batchDisabled")
+    @RolePermission(value = {"超级管理员"})
     public RestResult batchDisabled(@RequestBody List<Long> idList) {
         managerMapper.batchDisabled(idList);
         return RestResult.success("禁用成功");
@@ -97,11 +98,11 @@ public class ManagerController {
 
     @Authorization
     @ApiOperation(value = "管理员查询")
-    @RequiredPermission("/manager/search")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
     @PostMapping("/manager/search")
+    @RolePermission(value = {"超级管理员","管理员"})
     public RestResult search(@RequestBody JSONObject jsonObject) {
         LinkedHashMap manager = (LinkedHashMap) jsonObject.get("manager");
         Manager m = new Manager();
@@ -128,23 +129,23 @@ public class ManagerController {
 
     @Authorization
     @ApiOperation(value = "管理员禁用")
-    @RequiredPermission("/manager/disable")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
     @PostMapping("/manager/disable")
+    @RolePermission(value = {"超级管理员"})
     public RestResult disable(Long id) {
         managerMapper.disable(id);
         return RestResult.success("禁用成功");
     }
 
     @Authorization
-    @ApiOperation(value = "管理员禁用")
-    @RequiredPermission("/manager/enable")
+    @ApiOperation(value = "管理员启用")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
     @PostMapping("/manager/enable")
+    @RolePermission(value = {"超级管理员"})
     public RestResult enable(Long id) {
         managerMapper.enable(id);
         return RestResult.success("启用成功");
@@ -153,10 +154,10 @@ public class ManagerController {
 
     @Authorization
     @ApiOperation(value = "新增管理员")
-    @RequiredPermission("/manager/save")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
+    @RolePermission(value = {"超级管理员"})
     @PostMapping("/manager/save")
     public RestResult save(@RequestBody JSONObject jsonObject) {
         System.out.println(jsonObject);
@@ -185,6 +186,7 @@ public class ManagerController {
         if(avatar != null) {
             manager.setAvator(avatar);
         }
+        account.setRole("admin");
         accountService.save(account);
         manager.setId(account.getId());
         manager.setCreateTime(LocalDateTime.now());
@@ -204,6 +206,7 @@ public class ManagerController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
+    @RolePermission(value = "超级管理员")
     @PostMapping("/manager/addRole")
     public RestResult addRole(@RequestBody JSONObject jsonObject) {
         ArrayList<Integer> roleIds = (ArrayList) jsonObject.get("roleIds");
@@ -225,6 +228,7 @@ public class ManagerController {
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
     @PostMapping("/manager/update")
+    @RolePermission(value = {"超级管理员"})
     public RestResult update(@RequestBody Map<String,Manager> managerMap) {
         System.out.println(managerMap);
         Manager manager = managerMap.get("manager");

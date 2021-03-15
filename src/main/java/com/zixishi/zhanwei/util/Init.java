@@ -1,9 +1,12 @@
 package com.zixishi.zhanwei.util;
 
 import com.zixishi.zhanwei.config.authorization.annotation.Authorization;
+import com.zixishi.zhanwei.config.authorization.annotation.RolePermission;
 import com.zixishi.zhanwei.mapper.PermissionMapper;
+import com.zixishi.zhanwei.mapper.RoleMapper;
 import com.zixishi.zhanwei.model.Permission;
 
+import com.zixishi.zhanwei.model.Role;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -15,10 +18,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import static cn.hutool.core.util.ClassUtil.getClassLoader;
@@ -29,6 +29,8 @@ import static cn.hutool.core.util.ClassUtil.getClassLoader;
 public class Init {
     @Resource
     private PermissionMapper permissionMapper;
+    @Resource
+    private RoleMapper roleMapper;
 
 
     public  static Set<Class<?>> getClasses(String packageName) throws IOException {
@@ -126,7 +128,11 @@ public class Init {
         Set<Class<?>> controllers = getClasses("com.zixishi.zhanwei.controller");
 
 
-        List<String> paths = permissionMapper.searchPath();
+        List<Permission> permissions = permissionMapper.searchPath();
+        List<String> paths = new ArrayList<>();
+        for (Permission permission : permissions) {
+            paths.add(permission.getPath());
+        }
         for (Class<?> controller : controllers) {
             Method[] methods = controller.getMethods();
 //            System.out.println(controller.getSimpleName());
@@ -134,15 +140,47 @@ public class Init {
             String[] split = name.split("Controller");
             String className = split[0].toLowerCase();
             for (Method method : methods) {
+                String path = "/" + className + "/" + method.getName();
+                Permission permission = permissionMapper.attach(path);
                 if(method.getAnnotation(Authorization.class) != null) {
                     //需要进行登录校验的，进行获取
-                    String path = "/" + className + "/" + method.getName();
                     if(!paths.contains(path)) {
                         permissionMapper.save(path);
                     }
                 }
+
+                //根据角色配置对应的权限
+                RolePermission rolePermission = method.getAnnotation(RolePermission.class);
+                Authorization annotation = method.getAnnotation(Authorization.class);
+                System.out.println(annotation);
+                if(rolePermission != null) {
+                    List<Role> roles = roleMapper.search();
+                    for (Role role : roles) {
+                        String[] values = rolePermission.value();
+
+
+                        for (int i = 0; i < values.length; i++) {
+                            if (role.getRolename().equals(values[i])) {
+                                List<Permission> oldPermissions = permissionMapper.searchByRole(role);
+                                List<String> oldPaths = new ArrayList<>();
+                                for (Permission oldPermission : oldPermissions) {
+                                    oldPaths.add(oldPermission.getPath());
+                                }
+                                if(!oldPaths.contains(path)) {
+                                    permissionMapper.bind(role,permission);
+                                }
+                            }
+                        }
+
+                    }
+
+                }
             }
         }
+
+
+
+
     }
 
 }
