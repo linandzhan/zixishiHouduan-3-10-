@@ -4,11 +4,12 @@ import com.zixishi.zhanwei.dto.AreaDto;
 import com.zixishi.zhanwei.model.Area;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 public interface AreaService {
     List<Area> search();
 
-    List<AreaDto> searchDTO(LocalDate time);
+    List<AreaDto> searchDTO(LocalDate time, LocalTime afterTime,LocalTime endTime);
 
 }

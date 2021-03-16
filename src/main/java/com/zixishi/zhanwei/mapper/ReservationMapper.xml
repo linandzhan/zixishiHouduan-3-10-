@@ -5,7 +5,8 @@
         <id property="id" column="id"/>
         <result property="startTime" column="start_time"/>
         <result property="endTime" column="end_time"/>
-        <result property="date" column="date"/>
+        <result property="book_date" column="bookDate"/>
+        <result property="have_using" column="haveUsing"/>
         <association property="seat" column="seat_id" javaType="seat" select="getSeat">
             <id property="id" column="id"/>
             <result property="enabled" column="enabled"/>
@@ -30,10 +31,64 @@
     </select>
 
     <select id="searchNow" resultMap="reservationMap">
-        SELECT * FROM `reservation` where start_time &lt; now()  and end_time &gt; now()
+        SELECT * FROM `reservation` where start_time &lt; now()  and end_time &gt; now() and book_date = #{today}
     </select>
 
     <select id="searchByDate" resultMap="reservationMap">
-         SELECT * FROM `reservation` where start_time &lt; #{time}  and end_time &gt; #{time}
+         SELECT * FROM `reservation` where ( start_time &gt; #{afterTime} and end_time &lt; #{endTime} ) or (start_time &lt; #{afterTime} and end_time &gt; #{afterTime} )or
+           (start_time &lt; #{endTime} and end_time &gt; #{endTime})
+           and book_date = #{time}
     </select>
+
+
+    <insert id="save">
+        insert into reservation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="seatId != null">
+                seat_id,
+            </if>
+            <if test="startTime != null">
+                start_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+            <if test="areaId != null">
+                area_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="reservationDate != null">
+                book_date,
+            </if>
+            <if test="using != null">
+                have_using,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="seatId != null">
+                #{seatId},
+            </if>
+            <if test="startTime != null">
+                #{startTime},
+            </if>
+            <if test="endTime != null">
+                #{endTime},
+            </if>
+            <if test="areaId != null">
+                #{areaId},
+            </if>
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="reservationDate != null">
+                #{reservationDate},
+            </if>
+            <if test="using != null">
+                #{using},
+            </if>
+        </trim>
+    </insert>
 </mapper>

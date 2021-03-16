@@ -17,4 +17,6 @@ public class SeatDTO {
      */
     @Value("false")
     private Boolean status;
+
+    private String description;
 }

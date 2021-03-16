@@ -5,6 +5,7 @@
         <id property="id" column="id"/>
         <result property="enabled" column="enabled"/>
         <result property="seatName" column="seat_name"/>
+        <result property="description" column="description"/>
         <association property="area" column="area_id" javaType="area" select="getArea">
             <id property="id" column="id"/>
             <result property="name" column="name"/>

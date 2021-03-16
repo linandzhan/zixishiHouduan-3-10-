@@ -19,7 +19,7 @@ public class Reservation {
 
     private LocalDateTime endTime;
 
-    private LocalDate date;
+    private LocalDate bookDate;
 
     private Area area;
 
@@ -28,4 +28,6 @@ public class Reservation {
      * 哪个用户预约的
      */
     private User user;
+
+    private Boolean haveUsing;
 }

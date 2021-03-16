@@ -99,4 +99,8 @@
     <select id="get" resultMap="userMap">
         select * from user where id = #{id}
     </select>
+
+    <select id="findByPhone" resultMap="userMap">
+        select * from user where phone = #{phone}
+    </select>
 </mapper>

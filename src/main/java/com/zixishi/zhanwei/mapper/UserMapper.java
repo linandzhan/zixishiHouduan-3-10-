@@ -17,4 +17,6 @@ public interface UserMapper {
     void save(User user);
 
     User get(Long id);
+
+    User findByPhone(String phone);
 }

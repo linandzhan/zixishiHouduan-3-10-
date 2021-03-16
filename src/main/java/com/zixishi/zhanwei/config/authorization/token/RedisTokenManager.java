@@ -76,8 +76,10 @@ public class RedisTokenManager implements TokenManager {
 //        }
         //使用userId和源token简单拼接成的token，可以增加加密措施
         String token = authentication;
-        long userId = tokenMapper.findAccountByToken(token);
-
+        Long userId = tokenMapper.findAccountByToken(token);
+        if(userId == null) {
+            return null;
+        }
         return new TokenModel(userId, token);
     }
 

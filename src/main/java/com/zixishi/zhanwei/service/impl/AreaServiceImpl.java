@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 @Service
@@ -27,13 +28,24 @@ public class AreaServiceImpl implements AreaService {
     }
 
     @Override
-    public List<AreaDto> searchDTO(LocalDate time) {
+    public List<AreaDto> searchDTO(LocalDate time, LocalTime afterTime,LocalTime endTime) {
         List<Area> areas = areaMapper.search();
         List<Reservation> reservations = null;
-        if(time.isEqual(LocalDate.now())){
-           reservations =  reservationService.searchNow();  //查询当前预约情况
-        }else{
-          reservations=   reservationService.searchByDate(time);  //根据时间查询预约情况
+//        if(time.isEqual(LocalDate.now()) && afterTime.equals(LocalTime.now())){
+//           reservations =  reservationService.searchNow();  //查询当前预约情况
+//        }else if()){
+//          reservations=   reservationService.searchByDate(time);  //根据时间查询预约情况
+//        }
+        if(time == null && afterTime==null){
+            reservations =  reservationService.searchNow();
+        }else if (time!=null && afterTime == null) {
+            afterTime = LocalTime.parse("00:00:00");
+            reservations = reservationService.searchByDate(time,afterTime,endTime);
+        }else if (time ==null && afterTime!=null) {
+            time = LocalDate.now();
+            reservations = reservationService.searchByDate(time, afterTime,endTime);
+        }else {
+            reservations = reservationService.searchByDate(time, afterTime,endTime);
         }
 
         List<AreaDto> myResult  = new ArrayList<>();
@@ -53,9 +65,10 @@ public class AreaServiceImpl implements AreaService {
                 }
                 for (Reservation reservation : reservations) {
                     Long seatId = reservation.getSeat().getId();
-                    if(seat.getId() == seatId) {
+                    if(seat.getId() == seatId && reservation.getHaveUsing()==true) {
                         seatDTO.setUsername(reservation.getUser().getUsername());
                         seatDTO.setStatus(true);
+                        break;  //当前时间。该座位已经有一个预约匹配上了。
                     }else {
                         seatDTO.setStatus(false);
                     }

@@ -22,7 +22,8 @@ public interface TokenMapper {
 
     void update(Token token);
 
-    long findAccountByToken(String token);
+    Long findAccountByToken(String token);
 
     void deleteToken(long accountId);
+
 }

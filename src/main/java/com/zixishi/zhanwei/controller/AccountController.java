@@ -44,6 +44,8 @@ public class AccountController {
     private ManagerMapper managerMapper;
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private TokenMapper tokenMapper;
 
     @ApiOperation(value = "用户登录接口")
     @ApiImplicitParams({ @ApiImplicitParam(name = "username", value = "登录名"), @ApiImplicitParam(name = "password", value = "密码", required = true)})
@@ -81,15 +83,15 @@ public class AccountController {
 
 
 
-    @Authorization
+
     @ApiOperation(value = "退出登录")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
-    @RolePermission(value = {"用户","管理员","超级管理员"})
+//    @RolePermission(value = {"用户","管理员","超级管理员"})
     @PostMapping("/account/logout")
-    public RestResult logout(@CurrentUser Account user) {
-        tokenManager.deleteToken(user.getId());
+    public RestResult logout() {
+//        tokenManager.deleteToken(user.getId());
         return RestResult.success("退出成功");
     }
 
