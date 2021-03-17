@@ -5,7 +5,9 @@ import com.zixishi.zhanwei.config.authorization.annotation.Authorization;
 import com.zixishi.zhanwei.config.authorization.annotation.RolePermission;
 import com.zixishi.zhanwei.dto.AreaDto;
 import com.zixishi.zhanwei.dto.SeatDTO;
+import com.zixishi.zhanwei.model.Reservation;
 import com.zixishi.zhanwei.service.AreaService;
+import com.zixishi.zhanwei.service.ReservationService;
 import com.zixishi.zhanwei.service.SeatService;
 import com.zixishi.zhanwei.util.Pageable;
 import com.zixishi.zhanwei.util.RestResult;
@@ -28,6 +30,8 @@ public class AreaController {
 
     @Resource
     private AreaService areaService;
+    @Resource
+    private ReservationService reservationService;
 
     @ApiOperation(value = "查询区域信息")
     @ApiImplicitParams({
@@ -56,19 +60,26 @@ public class AreaController {
         }
 
         List<AreaDto> areaDtos = areaService.searchDTO(searchTime,startTime,endTime);
-        for (AreaDto areaDto : areaDtos) {
-            List<SeatDTO> seatDTOs = areaDto.getSeatDTO();
-            areaDto.setTotalSeat(seatDTOs.size());
-            int countUse = 0;
-            for (SeatDTO seatDTO : seatDTOs) {
-                if(seatDTO.getStatus()) {
-                    //该座位现在有人在用着
-                    countUse++;
-                }
-            }
-            areaDto.setRemainingSeat(areaDto.getTotalSeat()-countUse);
-        }
+        List<AreaDto> fillareaDtos = areaService.fillareaDtos(areaDtos);
+
+
         return RestResult.success(areaDtos);
+    }
+
+    @ApiOperation(value = "根据id查询当前区域下的信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
+    })
+    @Authorization
+    @PostMapping("area/getById")
+//    @RolePermission(value = {"用户","管理员","超级管理员"})
+    public RestResult getById(@RequestBody JSONObject jsonObject) {
+        String id = (String) jsonObject.get("id");
+        List<AreaDto> areaDtos = areaService.searchDTO(null, null, null);
+        System.out.println(areaDtos);
+        List<AreaDto> fillareaDtos = areaService.fillareaDtos(areaDtos);
+        System.out.println(fillareaDtos);
+        return RestResult.success(fillareaDtos);
     }
 
 

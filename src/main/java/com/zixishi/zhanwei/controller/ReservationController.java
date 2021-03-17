@@ -64,7 +64,7 @@ public class ReservationController {
 //        LocalDateTime endTime = LocalDateTime.parse(endTimeStr);
         LocalTime start = LocalTime.parse(startTimeStr);
         LocalTime end = LocalTime.parse(endTimeStr);
-        reservationService.save(reservationDate,areaId,phone,start,end,seatId);
-        return RestResult.success("添加成功");
+
+        return reservationService.save(reservationDate,areaId,phone,start,end,seatId);
     }
 }

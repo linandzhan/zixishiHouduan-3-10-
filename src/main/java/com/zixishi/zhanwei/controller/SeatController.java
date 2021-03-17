@@ -3,16 +3,14 @@ package com.zixishi.zhanwei.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.zixishi.zhanwei.config.authorization.annotation.Authorization;
 import com.zixishi.zhanwei.config.authorization.annotation.RolePermission;
-import com.zixishi.zhanwei.dto.AreaDto;
-import com.zixishi.zhanwei.dto.AreaOptionDTO;
-import com.zixishi.zhanwei.dto.SeatDTO;
-import com.zixishi.zhanwei.dto.SeatOptionDTO;
+import com.zixishi.zhanwei.dto.*;
 import com.zixishi.zhanwei.model.Area;
 import com.zixishi.zhanwei.model.Reservation;
 import com.zixishi.zhanwei.model.Seat;
 import com.zixishi.zhanwei.service.AreaService;
 import com.zixishi.zhanwei.service.ReservationService;
 import com.zixishi.zhanwei.service.SeatService;
+import com.zixishi.zhanwei.util.Pageable;
 import com.zixishi.zhanwei.util.RestResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -28,6 +26,7 @@ import javax.swing.text.DateFormatter;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @RestController
@@ -70,8 +69,29 @@ public class SeatController {
     })
 //    @RolePermission(value = {"超级管理员","管理员","用户"})
     @PostMapping("/seat/searchOptions")
-    public RestResult searchOptions() {
-        List<AreaDto> myResult = areaService.searchDTO(LocalDate.now(),LocalTime.now(),LocalTime.now());
+    public RestResult searchOptions(@RequestBody JSONObject jsonObject) {
+        LocalDate reservationDate  = null;
+        LocalTime start = null;
+        LocalTime end = null;
+
+
+
+
+        String startTimeStr = (String) jsonObject.get("startTime");
+        String endTimeStr = (String) jsonObject.get("endTime");
+        String date = (String) jsonObject.get("date");
+        if(startTimeStr != null) {
+            start = LocalTime.parse(startTimeStr);
+        }
+        if(endTimeStr != null) {
+            end = LocalTime.parse(endTimeStr);
+        }
+        if(date != null) {
+            reservationDate = LocalDate.parse(date);
+        }
+
+
+        List<AreaDto> myResult = areaService.searchDTO(reservationDate,start,end);
         List<AreaOptionDTO> options = new ArrayList<>();
         for (AreaDto areaDto : myResult) {
             AreaOptionDTO areaOptionDTO = new AreaOptionDTO();
@@ -124,6 +144,40 @@ public class SeatController {
         List<SeatDTO> seatDTOS = seatService.searchByArea(Long.parseLong(id),searchTime);
 
         return RestResult.success(seatDTOS);
+    }
+
+
+    /**
+     * 根据座位查询预约情况（search)
+     * @param
+     */
+    @Authorization
+    @ApiOperation(value = "根据座位查询预约情况")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
+    })
+    @RolePermission(value = {"超级管理员","管理员"})
+    @PostMapping("/seat/searchReversation")
+    public RestResult searchReversation(@RequestBody JSONObject jsonObject) {
+        System.out.println(jsonObject);
+        LocalDate date = null;
+        String dateStr = (String) jsonObject.get("date");
+        Integer id = (Integer) jsonObject.get("id");
+        LinkedHashMap pageableLink = (LinkedHashMap) jsonObject.get("pageable");
+        Pageable pageable = new Pageable();
+        Integer page = (Integer) pageableLink.get("page");
+        Integer size = (Integer) pageableLink.get("size");
+        pageable.setPage(page);
+        pageable.setSize(size);
+        if(dateStr!=null) {
+            date = LocalDate.parse(dateStr);
+        }else {
+            date  = LocalDate.now();
+        }
+
+
+
+        return seatService.searchReservationBySeat(Long.parseLong(id.toString()),date,pageable);
     }
 
 

@@ -82,4 +82,21 @@ public class AreaServiceImpl implements AreaService {
         }
         return myResult;
     }
+
+    @Override
+    public List<AreaDto> fillareaDtos(List<AreaDto> areaDtos) {
+        for (AreaDto areaDto : areaDtos) {
+            List<SeatDTO> seatDTOs = areaDto.getSeatDTO();
+            areaDto.setTotalSeat(seatDTOs.size());
+            int countUse = 0;
+            for (SeatDTO seatDTO : seatDTOs) {
+                if(seatDTO.getStatus()) {
+                    //该座位现在有人在用着
+                    countUse++;
+                }
+            }
+            areaDto.setRemainingSeat(areaDto.getTotalSeat()-countUse);
+        }
+        return areaDtos;
+    }
 }

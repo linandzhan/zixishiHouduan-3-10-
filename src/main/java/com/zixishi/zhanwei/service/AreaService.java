@@ -12,4 +12,5 @@ public interface AreaService {
 
     List<AreaDto> searchDTO(LocalDate time, LocalTime afterTime,LocalTime endTime);
 
+    List<AreaDto> fillareaDtos(List<AreaDto> areaDtos);
 }

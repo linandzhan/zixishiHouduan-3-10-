@@ -35,8 +35,8 @@
     </select>
 
     <select id="searchByDate" resultMap="reservationMap">
-         SELECT * FROM `reservation` where ( start_time &gt; #{afterTime} and end_time &lt; #{endTime} ) or (start_time &lt; #{afterTime} and end_time &gt; #{afterTime} )or
-           (start_time &lt; #{endTime} and end_time &gt; #{endTime})
+         SELECT * FROM `reservation` where ( start_time &gt; #{afterTime} and end_time &lt; #{endTime} ) or (start_time &lt;= #{afterTime} and end_time &gt; #{afterTime} )or
+           (start_time &lt; #{endTime} and end_time &gt;= #{endTime})
            and book_date = #{time}
     </select>
 
@@ -91,4 +91,13 @@
             </if>
         </trim>
     </insert>
+
+
+    <select id="searchBySeatAndDate" resultType="com.zixishi.zhanwei.dto.ReservationBySeatDTO">
+        select r.start_time,r.end_time,u.username from reservation r  left join user u on u.id = r.user_id  where book_date = #{date} and seat_id = #{seatId}
+    </select>
+
+    <select id="countBySeatAndDate" resultType="long">
+        select count(*) from  reservation r  left join user u on u.id = r.user_id  where book_date = #{date} and seat_id = #{seatId}
+    </select>
 </mapper>

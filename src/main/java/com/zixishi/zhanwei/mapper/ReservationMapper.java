@@ -1,5 +1,6 @@
 package com.zixishi.zhanwei.mapper;
 
+import com.zixishi.zhanwei.dto.ReservationBySeatDTO;
 import com.zixishi.zhanwei.dto.ReservationSaveDTO;
 import com.zixishi.zhanwei.model.Reservation;
 import org.apache.ibatis.annotations.Mapper;
@@ -18,4 +19,8 @@ public interface ReservationMapper {
     List<Reservation> searchByDate(LocalDate time,LocalTime afterTime,LocalTime endTime);
 
     void save(ReservationSaveDTO reservationSaveDTO);
+
+    List<ReservationBySeatDTO> searchBySeatAndDate(Long seatId, LocalDate date);
+
+    Long countBySeatAndDate(Long seatId, LocalDate date);
 }

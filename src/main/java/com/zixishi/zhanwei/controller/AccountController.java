@@ -188,4 +188,16 @@ public class AccountController {
      }
 
 
+    @Authorization
+    @ApiOperation(value = "根据电话查找出账号")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
+    })
+//    @RolePermission(value = {"管理员","超级管理员"})
+    @PostMapping("/account/getAccountByPhone")
+    public RestResult getAccountByPhone(@RequestBody JSONObject jsonObject) {
+        String phone = (String) jsonObject.get("phone");
+        User user = userMapper.findByPhone(phone);
+        return RestResult.success(user);
+    }
 }

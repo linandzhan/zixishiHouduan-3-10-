@@ -1,6 +1,7 @@
 package com.zixishi.zhanwei.service;
 
 import com.zixishi.zhanwei.model.Reservation;
+import com.zixishi.zhanwei.util.RestResult;
 
 
 import java.time.LocalDate;
@@ -14,5 +15,5 @@ public interface ReservationService {
 
     List<Reservation> searchByDate(LocalDate time,LocalTime afterTime,LocalTime endTime);
 
-    void save(LocalDate reservationDate, String areaId, String phone, LocalTime startTime, LocalTime endTime, String seatId);
+    RestResult save(LocalDate reservationDate, String areaId, String phone, LocalTime startTime, LocalTime endTime, String seatId);
 }
