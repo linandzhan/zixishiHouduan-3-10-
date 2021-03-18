@@ -78,8 +78,12 @@ public class AreaController {
         List<AreaDto> areaDtos = areaService.searchDTO(null, null, null);
         System.out.println(areaDtos);
         List<AreaDto> fillareaDtos = areaService.fillareaDtos(areaDtos);
-        System.out.println(fillareaDtos);
-        return RestResult.success(fillareaDtos);
+        for (AreaDto fillareaDto : fillareaDtos) {
+            if(fillareaDto.getAreaId() == Long.parseLong(id)) {
+                return RestResult.success(fillareaDto);
+            }
+        }
+        return null;
     }
 
 

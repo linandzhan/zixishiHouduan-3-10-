@@ -4,7 +4,11 @@ package com.zixishi.zhanwei.controller;
 import cn.hutool.core.date.DateTime;
 import com.alibaba.fastjson.JSONObject;
 import com.zixishi.zhanwei.config.authorization.annotation.Authorization;
+import com.zixishi.zhanwei.config.authorization.annotation.CurrentUser;
+import com.zixishi.zhanwei.model.Account;
+import com.zixishi.zhanwei.model.User;
 import com.zixishi.zhanwei.service.ReservationService;
+import com.zixishi.zhanwei.util.Pageable;
 import com.zixishi.zhanwei.util.RestResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -23,6 +27,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 
 
@@ -53,6 +58,9 @@ public class ReservationController {
         String phone = (String) jsonObject.get("phone");
         String startTimeStr = (String) jsonObject.get("startTime");
         String endTimeStr = (String) jsonObject.get("endTime");
+        String moneyStr = (String) jsonObject.get("money");
+        String[] arr = moneyStr.split("元");
+        Double money = Double.parseDouble(arr[0]);
 
 //        String start = date+" "+startTimeStr;
 //        String end = date+" "+endTimeStr;
@@ -65,6 +73,39 @@ public class ReservationController {
         LocalTime start = LocalTime.parse(startTimeStr);
         LocalTime end = LocalTime.parse(endTimeStr);
 
-        return reservationService.save(reservationDate,areaId,phone,start,end,seatId);
+        return reservationService.save(reservationDate,areaId,phone,start,end,seatId,money);
+    }
+
+
+
+
+    /**
+     * 根据用户查找该用户下的预约历史（search)
+     * @param
+     */
+    @Authorization
+    @ApiOperation(value = "预定座位")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
+    })
+//    @RolePermission(value = {"超级管理员","管理员","用户"})
+    @PostMapping("/reservation/findByUser")
+    public RestResult findByUser(@RequestBody JSONObject jsonObject, @CurrentUser Account user) throws ParseException {
+        System.out.println(jsonObject);
+        System.out.println(user);
+        String bookDateStr = (String) jsonObject.get("bookDate");
+        LocalDate bookDate = null;
+        if(bookDateStr != null) {
+           bookDate  = LocalDate.parse(bookDateStr);
+        }
+
+
+        LinkedHashMap pageableStr = (LinkedHashMap) jsonObject.get("pageable");
+        Pageable pageable = new Pageable();
+        Integer page = (Integer) pageableStr.get("page");
+        Integer size = (Integer) pageableStr.get("size");
+        pageable.setPage(page);
+        pageable.setSize(size);
+        return reservationService.fndByUser(user.getId(),bookDate,pageable);
     }
 }

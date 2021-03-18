@@ -23,4 +23,12 @@ public interface ReservationMapper {
     List<ReservationBySeatDTO> searchBySeatAndDate(Long seatId, LocalDate date);
 
     Long countBySeatAndDate(Long seatId, LocalDate date);
+
+    List<Reservation> findByUser(Long userId, LocalDate bookDate);
+
+    Long countByUser(Long userId, LocalDate bookDate);
+
+    List<Reservation> findByUserEnding(Long userId, LocalDate bookDate);
+
+    List<Reservation> findByUserCancel(Long userId, LocalDate bookDate);
 }

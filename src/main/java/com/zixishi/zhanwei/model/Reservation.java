@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  * 预约
@@ -15,9 +16,9 @@ public class Reservation {
      */
     private Long id;
 
-    private LocalDateTime startTime;
+    private LocalTime startTime;
 
-    private LocalDateTime endTime;
+    private LocalTime endTime;
 
     private LocalDate bookDate;
 
@@ -30,4 +31,8 @@ public class Reservation {
     private User user;
 
     private Boolean haveUsing;
+
+    private String cancelReason;
+
+    private Double payAmount;
 }

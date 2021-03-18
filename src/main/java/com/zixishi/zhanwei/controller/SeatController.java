@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.zixishi.zhanwei.config.authorization.annotation.Authorization;
 import com.zixishi.zhanwei.config.authorization.annotation.RolePermission;
 import com.zixishi.zhanwei.dto.*;
+import com.zixishi.zhanwei.mapper.SeatMapper;
 import com.zixishi.zhanwei.model.Area;
 import com.zixishi.zhanwei.model.Reservation;
 import com.zixishi.zhanwei.model.Seat;
@@ -39,6 +40,8 @@ public class SeatController {
     private SeatService seatService;
     @Resource
     private ReservationService reservationService;
+    @Resource
+    private SeatMapper seatMapper;
 
     /**
      * 实时查询座位状态（search)
@@ -180,6 +183,24 @@ public class SeatController {
         return seatService.searchReservationBySeat(Long.parseLong(id.toString()),date,pageable);
     }
 
+
+
+    /**
+     * 根据座位查询预约情况（search)
+     * @param
+     */
+    @Authorization
+    @ApiOperation(value = "根据座位查询预约情况")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
+    })
+    @PostMapping("/seat/get")
+    public RestResult get(@RequestBody JSONObject jsonObject) {
+        System.out.println(jsonObject);
+        String id = (String) jsonObject.get("id");
+       Seat seat =  seatMapper.get(Long.parseLong(id));
+        return RestResult.success(seat);
+    }
 
 
 

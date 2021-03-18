@@ -10,4 +10,7 @@ public interface SeatMapper {
     public List<Seat> findSeatByArea(Long id);
 
     List<Seat> search();
+
+    Seat get(Long id);
+
 }

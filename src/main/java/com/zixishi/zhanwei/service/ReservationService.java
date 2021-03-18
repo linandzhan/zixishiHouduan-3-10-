@@ -1,6 +1,8 @@
 package com.zixishi.zhanwei.service;
 
 import com.zixishi.zhanwei.model.Reservation;
+import com.zixishi.zhanwei.model.User;
+import com.zixishi.zhanwei.util.Pageable;
 import com.zixishi.zhanwei.util.RestResult;
 
 
@@ -15,5 +17,7 @@ public interface ReservationService {
 
     List<Reservation> searchByDate(LocalDate time,LocalTime afterTime,LocalTime endTime);
 
-    RestResult save(LocalDate reservationDate, String areaId, String phone, LocalTime startTime, LocalTime endTime, String seatId);
+    RestResult save(LocalDate reservationDate, String areaId, String phone, LocalTime startTime, LocalTime endTime, String seatId,Double money);
+
+    RestResult fndByUser(Long userId, LocalDate bookDate, Pageable pageable);
 }

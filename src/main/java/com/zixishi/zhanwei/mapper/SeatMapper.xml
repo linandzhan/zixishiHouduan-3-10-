@@ -26,4 +26,9 @@
     <select id="search" resultMap="seatMap">
         select * from seat
     </select>
+
+
+    <select id="get" parameterType="long" resultMap="seatMap">
+        select * from seat where id = #{id}
+    </select>
 </mapper>

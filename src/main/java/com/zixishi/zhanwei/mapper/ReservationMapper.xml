@@ -7,6 +7,8 @@
         <result property="endTime" column="end_time"/>
         <result property="book_date" column="bookDate"/>
         <result property="have_using" column="haveUsing"/>
+        <result property="pay_amount" column="payAmount"/>
+        <result property="cancel_reason" column="cancelReason"/>
         <association property="seat" column="seat_id" javaType="seat" select="getSeat">
             <id property="id" column="id"/>
             <result property="enabled" column="enabled"/>
@@ -100,4 +102,37 @@
     <select id="countBySeatAndDate" resultType="long">
         select count(*) from  reservation r  left join user u on u.id = r.user_id  where book_date = #{date} and seat_id = #{seatId}
     </select>
+
+
+    <select id="findByUser" resultMap="reservationMap">
+        select * from reservation where user_id = #{userId}
+        <if test="bookDate != null">
+            and book_date = #{bookDate}
+        </if>
+    </select>
+
+
+    <select id="countByUser" resultType="long">
+        select count(*) from reservation where user_id = #{userId}
+        <if test="bookDate != null">
+            and book_date = #{bookDate}
+        </if>
+    </select>
+
+<!--    <select id="findByUserEnding" resultMap="reservationMap">-->
+<!--        select * from reservation where user_id = #{userId}-->
+<!--        and end_time lt;= now()-->
+<!--        <if test="bookDate != null">-->
+<!--            and book_date = #{bookDate}-->
+<!--        </if>-->
+<!--    </select>-->
+
+
+<!--    <select id="findByUserCancel" resultMap="reservationMap">-->
+<!--        select * from reservation where user_id = #{userId}-->
+<!--        and have_using = false-->
+<!--        <if test="bookDate != null">-->
+<!--            and book_date = #{bookDate}-->
+<!--        </if>-->
+<!--    </select>-->
 </mapper>
