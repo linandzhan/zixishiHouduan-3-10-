@@ -20,4 +20,6 @@ public class ReservationSaveDTO {
     private LocalTime endTime;
 
     private Boolean using;
+
+    private Double money;
 }

@@ -89,15 +89,18 @@ public class ReservationController {
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
 //    @RolePermission(value = {"超级管理员","管理员","用户"})
-    @PostMapping("/reservation/findByUser")
-    public RestResult findByUser(@RequestBody JSONObject jsonObject, @CurrentUser Account user) throws ParseException {
+    @PostMapping("/reservation/findAllByUser")
+    public RestResult findAllByUser(@RequestBody JSONObject jsonObject, @CurrentUser Account user) throws ParseException {
         System.out.println(jsonObject);
         System.out.println(user);
         String bookDateStr = (String) jsonObject.get("bookDate");
         LocalDate bookDate = null;
         if(bookDateStr != null) {
            bookDate  = LocalDate.parse(bookDateStr);
+        }else {
+            bookDate = LocalDate.now();
         }
+
 
 
         LinkedHashMap pageableStr = (LinkedHashMap) jsonObject.get("pageable");
@@ -108,4 +111,91 @@ public class ReservationController {
         pageable.setSize(size);
         return reservationService.fndByUser(user.getId(),bookDate,pageable);
     }
+
+
+
+    /**
+     * 根据用户查找该用户下的预约历史（search)
+     * @param
+     */
+    @Authorization
+    @ApiOperation(value = "预定座位")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
+    })
+//    @RolePermission(value = {"超级管理员","管理员","用户"})
+    @PostMapping("/reservation/findCancelByUser")
+    public RestResult findCancelByUser(@RequestBody JSONObject jsonObject, @CurrentUser Account user) throws ParseException {
+        String bookDateStr = (String) jsonObject.get("bookDate");
+        LocalDate bookDate = null;
+        if(bookDateStr != null) {
+            bookDate  = LocalDate.parse(bookDateStr);
+        }
+//        if(bookDate == null) {
+//            bookDate = LocalDate.now();
+//        }
+
+
+        LinkedHashMap pageableStr = (LinkedHashMap) jsonObject.get("pageable");
+        Pageable pageable = new Pageable();
+        Integer page = (Integer) pageableStr.get("page");
+        Integer size = (Integer) pageableStr.get("size");
+        pageable.setPage(page);
+        pageable.setSize(size);
+        return reservationService.findCancelByUser(user.getId(),bookDate,pageable);
+
+    }
+
+
+    /**
+     * 根据用户查找该用户下的预约历史（search)
+     * @param
+     */
+    @Authorization
+    @ApiOperation(value = "预定座位")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
+    })
+//    @RolePermission(value = {"超级管理员","管理员","用户"})
+    @PostMapping("/reservation/findFinishByUser")
+    public RestResult findFinishByUser(@RequestBody JSONObject jsonObject, @CurrentUser Account user) throws ParseException {
+        String bookDateStr = (String) jsonObject.get("bookDate");
+        LocalDate bookDate = null;
+        if(bookDateStr != null) {
+            bookDate  = LocalDate.parse(bookDateStr);
+        }
+
+
+        LinkedHashMap pageableStr = (LinkedHashMap) jsonObject.get("pageable");
+        Pageable pageable = new Pageable();
+        Integer page = (Integer) pageableStr.get("page");
+        Integer size = (Integer) pageableStr.get("size");
+        pageable.setPage(page);
+        pageable.setSize(size);
+        return reservationService.findFinishByUser(user.getId(),bookDate,pageable);
+    }
+
+
+
+
+
+    /**
+     * 取消预定（search)
+     * @param
+     */
+    @Authorization
+    @ApiOperation(value = "取消预定")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
+    })
+//    @RolePermission(value = {"超级管理员","管理员","用户"})
+    @PostMapping("/reservation/cancel")
+    public RestResult cancel(@RequestBody JSONObject jsonObject, @CurrentUser Account user) throws ParseException {
+        Integer id = (Integer) jsonObject.get("id");
+        String reason = (String) jsonObject.get("reason");
+        reservationService.cancelReservation(Long.parseLong(id.toString()),reason);
+        return RestResult.success("取消成功");
+    }
+
+
 }

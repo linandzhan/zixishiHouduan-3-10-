@@ -55,6 +55,7 @@ public class ReservationServiceImpl implements ReservationService {
         save.setStartTime(startTime);
         save.setEndTime(endTime);
         save.setUsing(true);
+        save.setMoney(moeny);
         reservationMapper.save(save);
 
         User updateUser = new User();
@@ -71,34 +72,41 @@ public class ReservationServiceImpl implements ReservationService {
 //        List<Reservation> cancelReservation =  PageHelper.startPage(pageable.getPage(),pageable.getSize()).doSelectPage(()->reservationMapper.findByUserCancel(userId, bookDate));
         Long allTotal  = reservationMapper.countByUser(userId, bookDate);
         ListDTO allDTO = new ListDTO();
-        ListDTO endingDTO = new ListDTO();
-        ListDTO cancelDTO = new ListDTO();
+
         allDTO.setTotal(allTotal);
         allDTO.setItems(allReservation);
 
 
-        List<Reservation> endingReservation = new ArrayList<>();
-        List<Reservation> cancelReservation = new ArrayList<>();
-        for (Reservation reservation : allReservation) {
-            LocalTime endTime = reservation.getEndTime();
-            if(endTime.isBefore(LocalTime.now())  && reservation.getHaveUsing()) {
-                endingReservation.add(reservation);    //已结束的历史预约
-            }else if(!reservation.getHaveUsing()) {
-                cancelReservation.add(reservation);  //已取消的预约
-            }
-        }
-        endingDTO.setItems(endingReservation);
-        cancelDTO.setItems(cancelReservation);
-        Integer endingSize = endingReservation.size();
-        Integer cancelSize = cancelReservation.size();
-        endingDTO.setTotal(Long.parseLong(endingSize.toString()));
-        cancelDTO.setTotal(Long.parseLong(cancelSize.toString()));
 
-        List<ListDTO> result = new ArrayList<>();
-        result.add(allDTO);
-        result.add(endingDTO);
-        result.add(cancelDTO);
 
-        return RestResult.success(result);
+        return RestResult.success(allDTO);
+    }
+
+    @Override
+    public RestResult findCancelByUser(Long id, LocalDate bookDate, Pageable pageable) {
+
+        List<Reservation> cancelReservation =  PageHelper.startPage(pageable.getPage(),pageable.getSize()).doSelectPage(()->reservationMapper.findCancelByUser(id, bookDate));
+        Long cancelTotal  = reservationMapper.countCancelByUser(id, bookDate);
+        ListDTO allDTO = new ListDTO();
+
+        allDTO.setTotal(cancelTotal);
+        allDTO.setItems(cancelReservation);
+        return RestResult.success(allDTO);
+    }
+
+    @Override
+    public RestResult findFinishByUser(Long id, LocalDate bookDate, Pageable pageable) {
+        List<Reservation> finishReservation =  PageHelper.startPage(pageable.getPage(),pageable.getSize()).doSelectPage(()->reservationMapper.findFinishByUser(id, bookDate));
+        Long finishTotal  = reservationMapper.countFinishByUser(id, bookDate);
+        ListDTO allDTO = new ListDTO();
+
+        allDTO.setTotal(finishTotal);
+        allDTO.setItems(finishReservation);
+        return RestResult.success(allDTO);
+    }
+
+    @Override
+    public void cancelReservation(Long id,String reason) {
+        reservationMapper.cancel(id,reason);
     }
 }

@@ -20,4 +20,10 @@ public interface ReservationService {
     RestResult save(LocalDate reservationDate, String areaId, String phone, LocalTime startTime, LocalTime endTime, String seatId,Double money);
 
     RestResult fndByUser(Long userId, LocalDate bookDate, Pageable pageable);
+
+    RestResult findCancelByUser(Long id, LocalDate bookDate, Pageable pageable);
+
+    RestResult findFinishByUser(Long id, LocalDate bookDate, Pageable pageable);
+
+    void cancelReservation(Long id,String reason);
 }

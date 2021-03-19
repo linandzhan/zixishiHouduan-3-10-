@@ -4,12 +4,15 @@ import com.github.pagehelper.PageHelper;
 import com.zixishi.zhanwei.dto.ListDTO;
 import com.zixishi.zhanwei.mapper.AccountMapper;
 import com.zixishi.zhanwei.mapper.ManagerMapper;
+import com.zixishi.zhanwei.mapper.UserMapper;
 import com.zixishi.zhanwei.model.Account;
 import com.zixishi.zhanwei.model.Manager;
 import com.zixishi.zhanwei.model.Role;
+import com.zixishi.zhanwei.model.User;
 import com.zixishi.zhanwei.service.ManagerService;
 import com.zixishi.zhanwei.util.Pageable;
 import com.zixishi.zhanwei.util.RestResult;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -27,6 +30,9 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Resource
     private AccountMapper accountMapper;
+
+    @Resource
+    private UserMapper userMapper;
 
 
     @Override

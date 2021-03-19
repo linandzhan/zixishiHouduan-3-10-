@@ -67,6 +67,9 @@
             <if test="using != null">
                 have_using,
             </if>
+            <if test="money != null">
+                pay_amount,
+            </if>
         </trim>
 
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -91,12 +94,15 @@
             <if test="using != null">
                 #{using},
             </if>
+            <if test="money != null">
+                #{money},
+            </if>
         </trim>
     </insert>
 
 
     <select id="searchBySeatAndDate" resultType="com.zixishi.zhanwei.dto.ReservationBySeatDTO">
-        select r.start_time,r.end_time,u.username from reservation r  left join user u on u.id = r.user_id  where book_date = #{date} and seat_id = #{seatId}
+        select r.start_time,r.end_time,u.username,r.have_using,r.id,r.cancel_reason from reservation r  left join user u on u.id = r.user_id  where book_date = #{date} and seat_id = #{seatId}
     </select>
 
     <select id="countBySeatAndDate" resultType="long">
@@ -105,34 +111,58 @@
 
 
     <select id="findByUser" resultMap="reservationMap">
-        select * from reservation where user_id = #{userId}
+        select * from reservation where user_id = #{userId} and start_time &gt; now() and have_using is true
         <if test="bookDate != null">
-            and book_date = #{bookDate}
+            and book_date &gt;= #{bookDate}
         </if>
     </select>
 
 
     <select id="countByUser" resultType="long">
-        select count(*) from reservation where user_id = #{userId}
+        select count(*) from reservation where user_id = #{userId} and start_time &gt; now() and have_using is true
+        <if test="bookDate != null">
+            and book_date &gt;= #{bookDate}
+        </if>
+    </select>
+
+
+
+
+    <select id="findCancelByUser" resultMap="reservationMap">
+        select * from reservation where user_id = #{id}
+        and have_using = false
         <if test="bookDate != null">
             and book_date = #{bookDate}
         </if>
     </select>
 
-<!--    <select id="findByUserEnding" resultMap="reservationMap">-->
-<!--        select * from reservation where user_id = #{userId}-->
-<!--        and end_time lt;= now()-->
-<!--        <if test="bookDate != null">-->
-<!--            and book_date = #{bookDate}-->
-<!--        </if>-->
-<!--    </select>-->
 
 
-<!--    <select id="findByUserCancel" resultMap="reservationMap">-->
-<!--        select * from reservation where user_id = #{userId}-->
-<!--        and have_using = false-->
-<!--        <if test="bookDate != null">-->
-<!--            and book_date = #{bookDate}-->
-<!--        </if>-->
-<!--    </select>-->
+
+    <select id="findFinishByUser" resultMap="reservationMap">
+        select * from reservation where user_id = #{id}   and end_time &lt;= now() and have_using is true
+        <if test="bookDate != null">
+            and book_date = #{bookDate}
+        </if>
+    </select>
+
+    <select id="countFinishByUser" resultType="long">
+        select count(*) from reservation where user_id = #{id}    and end_time &lt;= now() and have_using is true
+        <if test="bookDate != null">
+            and book_date = #{bookDate}
+        </if>
+    </select>
+
+    <select id="countCancelByUser" resultType="long">
+        select count(*) from reservation where user_id = #{id}
+        and have_using is false
+        <if test="bookDate != null">
+            and book_date = #{bookDate}
+        </if>
+    </select>
+
+
+    <update id="cancel">
+        update reservation set have_using = false , cancel_reason = #{reason} where id = #{id}
+    </update>
 </mapper>
