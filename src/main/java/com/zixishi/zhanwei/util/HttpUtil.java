@@ -1,6 +1,9 @@
 package com.zixishi.zhanwei.util;
 
 import com.google.gson.Gson;
+
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -35,11 +38,11 @@ public class HttpUtil {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         CloseableHttpResponse response = null;
         HttpResult result = new HttpResult();
-        for (Map.Entry<String, String> entry:paramsMap.entrySet()
-             ) {
-            baseUrl+=entry.getKey()+"="+entry.getValue()+"&";
-        }
-        baseUrl=baseUrl.substring(0,baseUrl.length()-1);
+//        for (Map.Entry<String, String> entry:paramsMap.entrySet()
+//             ) {
+//            baseUrl+=entry.getKey()+"="+entry.getValue()+"&";
+//        }
+//        baseUrl=baseUrl.substring(0,baseUrl.length()-1);
         record.info("url:{}", baseUrl);
         HttpGet httpGet = new HttpGet(baseUrl);
         try {
@@ -160,5 +163,20 @@ public class HttpUtil {
             map.put(fieldName, fieldValue);
         }
         return map;
+    }
+
+
+    public static void main(String[] args) {
+//        OkHttpClient client = new OkHttpClient().newBuilder()
+//                .build();
+//        Request request = new Request.Builder()
+//                .url("https://api.gugudata.com/barcode/qrcode?appkey=BLPTTYNNCYA4&content=http://www.baidu.com&size=500")
+//                .method("GET", null)
+//                .build();
+//        Response response = client.newCall(request).execute();
+        HttpResult httpResult = doGet("https://api.gugudata.com/barcode/qrcode?appkey=BLPTTYNNCYA4&content=http://www.baidu.com&size=500", null);
+        String body = httpResult.getBody();
+
+        System.out.println(body);
     }
 }

@@ -37,9 +37,7 @@
     </select>
 
     <select id="searchByDate" resultMap="reservationMap">
-         SELECT * FROM `reservation` where ( start_time &gt; #{afterTime} and end_time &lt; #{endTime} ) or (start_time &lt;= #{afterTime} and end_time &gt; #{afterTime} )or
-           (start_time &lt; #{endTime} and end_time &gt;= #{endTime})
-           and book_date = #{time}
+        SELECT * FROM `reservation` where book_date = #{time} and ((start_time &lt;= #{afterTime} and end_time &gt; #{afterTime} ) or (start_time &lt; #{endTime} and end_time &gt;= #{endTime}) or (start_time &gt;=#{afterTime} and end_time &lt;= #{endTime}) )
     </select>
 
 

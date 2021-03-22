@@ -62,14 +62,7 @@ public class ReservationController {
         String[] arr = moneyStr.split("元");
         Double money = Double.parseDouble(arr[0]);
 
-//        String start = date+" "+startTimeStr;
-//        String end = date+" "+endTimeStr;
-//
-//
-//        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-//        LocalDateTime startT = LocalDateTime.parse(start,df);
-//        LocalDateTime endT = LocalDateTime.parse(end,df);
-//        LocalDateTime endTime = LocalDateTime.parse(endTimeStr);
+
         LocalTime start = LocalTime.parse(startTimeStr);
         LocalTime end = LocalTime.parse(endTimeStr);
 

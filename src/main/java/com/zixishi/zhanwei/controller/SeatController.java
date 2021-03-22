@@ -78,8 +78,6 @@ public class SeatController {
         LocalTime end = null;
 
 
-
-
         String startTimeStr = (String) jsonObject.get("startTime");
         String endTimeStr = (String) jsonObject.get("endTime");
         String date = (String) jsonObject.get("date");

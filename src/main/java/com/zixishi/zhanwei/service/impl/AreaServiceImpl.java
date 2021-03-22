@@ -31,11 +31,6 @@ public class AreaServiceImpl implements AreaService {
     public List<AreaDto> searchDTO(LocalDate time, LocalTime afterTime,LocalTime endTime) {
         List<Area> areas = areaMapper.search();
         List<Reservation> reservations = null;
-//        if(time.isEqual(LocalDate.now()) && afterTime.equals(LocalTime.now())){
-//           reservations =  reservationService.searchNow();  //查询当前预约情况
-//        }else if()){
-//          reservations=   reservationService.searchByDate(time);  //根据时间查询预约情况
-//        }
         if(time == null && afterTime==null){
             reservations =  reservationService.searchNow();
         }else if (time!=null && afterTime == null) {

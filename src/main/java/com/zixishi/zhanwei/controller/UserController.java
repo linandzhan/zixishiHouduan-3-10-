@@ -3,10 +3,12 @@ package com.zixishi.zhanwei.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zixishi.zhanwei.config.authorization.annotation.Authorization;
+import com.zixishi.zhanwei.config.authorization.annotation.CurrentUser;
 import com.zixishi.zhanwei.config.authorization.annotation.RequiredPermission;
 import com.zixishi.zhanwei.config.authorization.annotation.RolePermission;
 import com.zixishi.zhanwei.mapper.AccountMapper;
 import com.zixishi.zhanwei.mapper.UserMapper;
+import com.zixishi.zhanwei.model.Account;
 import com.zixishi.zhanwei.model.User;
 import com.zixishi.zhanwei.service.UserService;
 import com.zixishi.zhanwei.util.Pageable;
@@ -78,13 +80,20 @@ public class UserController {
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
     @PostMapping("/user/recharge")
-    @RolePermission(value = {"超级管理员","管理员"})
-    public RestResult recharge(@RequestBody JSONObject jsonObject) {
+    @RolePermission(value = {"超级管理员","管理员","用户"})
+    //因为有可能是当前用户自己充值，所以要加多一个CurrentUser
+    public RestResult recharge(@RequestBody JSONObject jsonObject,@CurrentUser Account account) {
         Integer id = (Integer) jsonObject.get("id");
-        String rechargeMoney = (String) jsonObject.get("rechargeMoney");
         User user = new User();
-        user.setId(Long.parseLong(id.toString()));
-        User attach = userService.attach(Long.parseLong(id.toString()));
+        if(id != null) {
+            user.setId(Long.parseLong(id.toString()));
+        }else if(id == null) {
+            user.setId(account.getId());
+        }
+        String rechargeMoney = (String) jsonObject.get("rechargeMoney");
+
+
+        User attach = userService.attach(account.getId());
         user.setBalance(attach.getBalance()+Double.parseDouble(rechargeMoney));
 
         userMapper.updateBalance(user);
@@ -111,5 +120,24 @@ public class UserController {
        userService.save(user);
         return RestResult.success("新增成功");
     }
+
+
+    /**
+     * 查询当前登录用户信息
+     * @param
+     */
+    @Authorization
+    @ApiOperation(value = "查询当前登录用户信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
+    })
+    @PostMapping("/user/get")
+//    @RolePermission(value = {"超级管理员","管理员"})
+    public RestResult get(@CurrentUser Account account) {
+        Long id = account.getId();
+        User user = userService.attach(id);
+        return RestResult.success(user);
+    }
+
 
 }
