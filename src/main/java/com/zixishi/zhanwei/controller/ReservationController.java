@@ -145,7 +145,7 @@ public class ReservationController {
      * @param
      */
     @Authorization
-    @ApiOperation(value = "预定座位")
+    @ApiOperation(value = "根据用户查找该用户下的预约历史")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
@@ -154,9 +154,12 @@ public class ReservationController {
     public RestResult findFinishByUser(@RequestBody JSONObject jsonObject, @CurrentUser Account user) throws ParseException {
         String bookDateStr = (String) jsonObject.get("bookDate");
         LocalDate bookDate = null;
+        LocalDate searchDate = null;
         if(bookDateStr != null) {
-            bookDate  = LocalDate.parse(bookDateStr);
+            searchDate  = LocalDate.parse(bookDateStr);
         }
+            bookDate = LocalDate.now();
+
 
 
         LinkedHashMap pageableStr = (LinkedHashMap) jsonObject.get("pageable");
@@ -165,7 +168,7 @@ public class ReservationController {
         Integer size = (Integer) pageableStr.get("size");
         pageable.setPage(page);
         pageable.setSize(size);
-        return reservationService.findFinishByUser(user.getId(),bookDate,pageable);
+        return reservationService.findFinishByUser(user.getId(),bookDate,pageable,searchDate);
     }
 
 
@@ -183,10 +186,10 @@ public class ReservationController {
     })
 //    @RolePermission(value = {"超级管理员","管理员","用户"})
     @PostMapping("/reservation/cancel")
-    public RestResult cancel(@RequestBody JSONObject jsonObject, @CurrentUser Account user) throws ParseException {
+    public RestResult cancel(@RequestBody JSONObject jsonObject, @CurrentUser Account account) throws ParseException {
         Integer id = (Integer) jsonObject.get("id");
         String reason = (String) jsonObject.get("reason");
-        reservationService.cancelReservation(Long.parseLong(id.toString()),reason);
+        reservationService.cancelReservation(Long.parseLong(id.toString()),reason,account);
         return RestResult.success("取消成功");
     }
 

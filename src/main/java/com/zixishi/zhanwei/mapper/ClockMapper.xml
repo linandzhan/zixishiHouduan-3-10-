@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zixishi.zhanwei.mapper.ClockMapper">
+    <resultMap id="clockMap" type="clock">
+        <id property="id" column="id"/>
+        <result property="signinTime" column="signin_time"/>
+        <result property="signoutTime" column="signout_time"/>
+        <result property="styleLength" column="style_length"/>
+        <result property="haveComment" column="have_comment"/>
+
+        <association property="user" column="user_id" javaType="user" select="getUser">
+            <id property="id" column="id"/>
+            <result property="username" column="username"/>
+            <result property="phone" column="phone"/>
+            <result property="avator" column="avator"/>
+            <result property="gender" column="gender"/>
+            <result property="balance" column="balance"/>
+            <result property="password" column="password"/>
+        </association>
+        <association property="reservation" column="reservation_id" javaType="reservation" select="getReservation">
+            <id property="id" column="id"/>
+            <result property="startTime" column="start_time"/>
+            <result property="endTime" column="end_time"/>
+            <result property="book_date" column="bookDate"/>
+            <result property="have_using" column="haveUsing"/>
+            <result property="pay_amount" column="payAmount"/>
+            <result property="cancel_reason" column="cancelReason"/>
+        </association>
+        <association property="seat" column="seat_id" javaType="seat" select="getSeat">
+            <id property="id" column="id"/>
+            <result property="enabled" column="enabled"/>
+            <result property="seatName" column="seat_name"/>
+            <result property="description" column="description"/>
+        </association>
+    </resultMap>
+
+    <select id="getUser" resultType="user">
+        select * from user where id = #{id}
+    </select>
+    <select id="getReservation" resultType="Reservation">
+        select * from reservation where id = #{id}
+    </select>
+    <select id="getSeat" resultType="seat">
+        select * from seat where id = #{id}
+    </select>
+
+
+    <select id="search" resultMap="clockMap">
+        select * from clock
+    </select>
+</mapper>

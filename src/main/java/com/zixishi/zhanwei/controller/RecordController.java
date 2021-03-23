@@ -1,8 +1,13 @@
 package com.zixishi.zhanwei.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
 import com.zixishi.zhanwei.config.authorization.annotation.Authorization;
 import com.zixishi.zhanwei.config.authorization.annotation.RolePermission;
+import com.zixishi.zhanwei.dto.ListDTO;
+import com.zixishi.zhanwei.mapper.RecordMapper;
+import com.zixishi.zhanwei.model.Manager;
+import com.zixishi.zhanwei.model.Record;
 import com.zixishi.zhanwei.util.Pageable;
 import com.zixishi.zhanwei.util.RestResult;
 import io.swagger.annotations.Api;
@@ -13,15 +18,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
+import java.util.List;
+
 @RestController
 @Api(tags = "打卡记录管理")
 public class RecordController {
+    @Resource
+    private RecordMapper recordMapper;
+
     /**
-     * 搜索当前用户打卡记录
+     * 搜索当前用户扣费记录
      * @return
      */
     @Authorization
-    @ApiOperation(value = "搜索当前用户打卡记录")
+    @ApiOperation(value = "搜索当前用户扣费记录")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
@@ -29,7 +40,12 @@ public class RecordController {
 //    @RolePermission(value = {"管理员","超级管理员","用户"})
     public RestResult search(@RequestBody Pageable pageable) {
         System.out.println(pageable);
-        return null;
+        List<Record> list =  PageHelper.startPage(pageable.getPage(),pageable.getSize()).doSelectPage(()->recordMapper.search());
+        Long total = recordMapper.count();
+        ListDTO listDTO = new ListDTO();
+        listDTO.setTotal(total);
+        listDTO.setItems(list);
+        return RestResult.success(listDTO);
     }
 
 
@@ -44,7 +60,7 @@ public class RecordController {
     })
     @PostMapping("/record/param")
 //    @RolePermission(value = {"管理员","超级管理员","用户"})
-    public RestResult param(@RequestBody Integer size) {
+    public RestResult param(@RequestBody JSONObject size) {
         System.out.println(size);
         return  null;
     }

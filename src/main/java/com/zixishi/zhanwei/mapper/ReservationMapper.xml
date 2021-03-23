@@ -40,6 +40,10 @@
         SELECT * FROM `reservation` where book_date = #{time} and ((start_time &lt;= #{afterTime} and end_time &gt; #{afterTime} ) or (start_time &lt; #{endTime} and end_time &gt;= #{endTime}) or (start_time &gt;=#{afterTime} and end_time &lt;= #{endTime}) )
     </select>
 
+    <select id="get" resultMap="reservationMap">
+        select * from reservation where id = #{id}
+    </select>
+
 
     <insert id="save">
         insert into reservation
@@ -109,18 +113,16 @@
 
 
     <select id="findByUser" resultMap="reservationMap">
-        select * from reservation where user_id = #{userId} and start_time &gt; now() and have_using is true
-        <if test="bookDate != null">
-            and book_date &gt;= #{bookDate}
-        </if>
+                select * from reservation where user_id = #{userId} and have_using is true and ((start_time &gt; now() and book_date = #{bookDate})
+
+            or (book_date &gt;  #{bookDate}))
     </select>
 
 
     <select id="countByUser" resultType="long">
-        select count(*) from reservation where user_id = #{userId} and start_time &gt; now() and have_using is true
-        <if test="bookDate != null">
-            and book_date &gt;= #{bookDate}
-        </if>
+                  select count(*) from reservation where user_id = #{userId} and have_using is true and ((start_time &gt; now() and book_date = #{bookDate})
+
+            or (book_date &gt;  #{bookDate}))
     </select>
 
 
@@ -138,17 +140,23 @@
 
 
     <select id="findFinishByUser" resultMap="reservationMap">
-        select * from reservation where user_id = #{id}   and end_time &lt;= now() and have_using is true
-        <if test="bookDate != null">
-            and book_date = #{bookDate}
+        select * from reservation where user_id = #{id} and have_using is true   and ((end_time &lt;= now() and book_date = #{bookDate})
+
+            or (book_date &lt; #{bookDate}))
+        <if test="searchDate != null">
+            and book_date = #{searchDate}
         </if>
     </select>
 
     <select id="countFinishByUser" resultType="long">
-        select count(*) from reservation where user_id = #{id}    and end_time &lt;= now() and have_using is true
-        <if test="bookDate != null">
-            and book_date = #{bookDate}
+              select count(*) from reservation where user_id = #{id} and have_using is true   and ((end_time &lt;= now() and book_date = #{bookDate})
+
+            or (book_date &lt; #{bookDate}))
+        <if test="searchDate != null">
+            and book_date = #{searchDate}
         </if>
+
+
     </select>
 
     <select id="countCancelByUser" resultType="long">
@@ -163,4 +171,9 @@
     <update id="cancel">
         update reservation set have_using = false , cancel_reason = #{reason} where id = #{id}
     </update>
+
+
+    <select id="searchByStartAndEndAndArea" resultMap="reservationMap">
+        select * from reservation where book_date &gt; #{searchStartDate} and book_date &lt; #{searchEndDate} and area_id = #{id}
+    </select>
 </mapper>

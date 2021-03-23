@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
 @RestController
@@ -84,6 +85,30 @@ public class AreaController {
             }
         }
         return null;
+    }
+
+    @ApiOperation(value = "根据id查询当前区域下的信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
+    })
+    @Authorization
+    @PostMapping("/area/searchMoneyByAreaAndDate")
+    //    @RolePermission(value = {"用户","管理员","超级管理员"})
+    public RestResult searchMoneyByAreaAndDate(@RequestBody JSONObject jsonObject) {
+        String year = (String) jsonObject.get("year");
+        String month = (String) jsonObject.get("month");
+        String year_ = year.substring(0, year.length() - 1);
+        String month_ = month.substring(0,month.length()-1);
+        System.out.println(year_);
+        System.out.println(month_);
+        if(Integer.parseInt(month_) < 10) {
+            month_ = "0"+month_;
+        }
+        String date = year_+"-"+month_+"-"+"01";
+        LocalDate searchStartDate = LocalDate.parse(date);
+        LocalDate searchEndDate = searchStartDate.with(TemporalAdjusters.lastDayOfMonth());
+
+        return areaService.searchMoneyByAreaAndDate(searchStartDate,searchEndDate);
     }
 
 

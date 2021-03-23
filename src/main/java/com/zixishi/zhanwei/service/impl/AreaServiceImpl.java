@@ -2,12 +2,14 @@ package com.zixishi.zhanwei.service.impl;
 
 import com.zixishi.zhanwei.dto.AreaDto;
 import com.zixishi.zhanwei.dto.SeatDTO;
+import com.zixishi.zhanwei.dto.TongJiArea;
 import com.zixishi.zhanwei.mapper.AreaMapper;
 import com.zixishi.zhanwei.model.Area;
 import com.zixishi.zhanwei.model.Reservation;
 import com.zixishi.zhanwei.model.Seat;
 import com.zixishi.zhanwei.service.AreaService;
 import com.zixishi.zhanwei.service.ReservationService;
+import com.zixishi.zhanwei.util.RestResult;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -93,5 +95,11 @@ public class AreaServiceImpl implements AreaService {
             areaDto.setRemainingSeat(areaDto.getTotalSeat()-countUse);
         }
         return areaDtos;
+    }
+
+    @Override
+    public RestResult searchMoneyByAreaAndDate(LocalDate searchStartDate, LocalDate searchEndDate) {
+        List<TongJiArea> areas = reservationService.searchByDate(searchStartDate,searchEndDate);
+        return RestResult.success(areas);
     }
 }

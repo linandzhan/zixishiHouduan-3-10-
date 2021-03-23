@@ -3,11 +3,12 @@ package com.zixishi.zhanwei.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.zixishi.zhanwei.dto.ListDTO;
 import com.zixishi.zhanwei.dto.ReservationSaveDTO;
+import com.zixishi.zhanwei.dto.TongJiArea;
+import com.zixishi.zhanwei.mapper.AreaMapper;
+import com.zixishi.zhanwei.mapper.RecordMapper;
 import com.zixishi.zhanwei.mapper.ReservationMapper;
 import com.zixishi.zhanwei.mapper.UserMapper;
-import com.zixishi.zhanwei.model.Manager;
-import com.zixishi.zhanwei.model.Reservation;
-import com.zixishi.zhanwei.model.User;
+import com.zixishi.zhanwei.model.*;
 import com.zixishi.zhanwei.service.ReservationService;
 import com.zixishi.zhanwei.util.Pageable;
 import com.zixishi.zhanwei.util.RestResult;
@@ -27,6 +28,11 @@ public class ReservationServiceImpl implements ReservationService {
     private ReservationMapper reservationMapper;
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private RecordMapper recordMapper;
+    @Resource
+    private AreaMapper areaMapper;
+
 
 
 
@@ -39,6 +45,36 @@ public class ReservationServiceImpl implements ReservationService {
     public List<Reservation> searchByDate(LocalDate time,LocalTime afterTime,LocalTime endTime) {
 
         return reservationMapper.searchByDate(time,afterTime,endTime);
+    }
+
+    //根据区域查询出每个区域下的预约集合。并将
+    @Override
+    public List<TongJiArea> searchByDate(LocalDate searchStartDate, LocalDate searchEndDate) {
+        List<String> itemStyles = new ArrayList<>();
+        itemStyles.add("#1ab394");
+        itemStyles.add("#79d2c0");
+        itemStyles.add("#483D8B");
+        itemStyles.add("#00BFFF");
+        itemStyles.add("#00FA9A");
+        itemStyles.add("#556B2F");
+        List<Area> areas = areaMapper.search();
+        List<TongJiArea> tongJiAreas = new ArrayList<>();
+        int i = 0;
+        for (Area area : areas) {
+                   List<Reservation> reservations =  reservationMapper.searchByStartAndEndAndArea(searchStartDate,searchEndDate,area.getId());
+                   Double income = 0D;
+                for (Reservation reservation : reservations) {
+                    income = income + reservation.getPayAmount();
+                }
+                TongJiArea tongJiArea = new TongJiArea();
+                tongJiArea.setAreaId(area.getId());
+                tongJiArea.setValue(income);
+                tongJiArea.setName(area.getName());
+                tongJiArea.setItemStyle(itemStyles.get(i));
+                tongJiAreas.add(tongJiArea);
+                i++;
+        }
+        return tongJiAreas;
     }
 
     @Override
@@ -62,6 +98,13 @@ public class ReservationServiceImpl implements ReservationService {
         updateUser.setBalance(user.getBalance()-moeny);
         updateUser.setId(user.getId());
         userMapper.updateBalance(updateUser);
+        Record record = new Record();
+        record.setUser(user);
+        record.setUpdateTime(LocalDateTime.now());
+        record.setType("支出");
+        record.setUpdateBalance(moeny);
+        record.setContent("预定座位扣费");
+        recordMapper.save(record);
        return RestResult.success("预约成功");
     }
 
@@ -95,9 +138,9 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public RestResult findFinishByUser(Long id, LocalDate bookDate, Pageable pageable) {
-        List<Reservation> finishReservation =  PageHelper.startPage(pageable.getPage(),pageable.getSize()).doSelectPage(()->reservationMapper.findFinishByUser(id, bookDate));
-        Long finishTotal  = reservationMapper.countFinishByUser(id, bookDate);
+    public RestResult findFinishByUser(Long id, LocalDate bookDate, Pageable pageable,LocalDate searchDate) {
+        List<Reservation> finishReservation =  PageHelper.startPage(pageable.getPage(),pageable.getSize()).doSelectPage(()->reservationMapper.findFinishByUser(id, bookDate,searchDate));
+        Long finishTotal  = reservationMapper.countFinishByUser(id, bookDate,searchDate);
         ListDTO allDTO = new ListDTO();
 
         allDTO.setTotal(finishTotal);
@@ -106,7 +149,18 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public void cancelReservation(Long id,String reason) {
+    public void cancelReservation(Long id, String reason, Account account) {
         reservationMapper.cancel(id,reason);
+        Record record = new Record();
+        User user = new User();
+        user.setId(account.getId());
+        record.setUser(user);
+        record.setContent("取消预约退款到账");
+        Reservation reservation = reservationMapper.get(id);
+        record.setUpdateBalance(reservation.getPayAmount());
+        record.setType("收入");
+        record.setUpdateTime(LocalDateTime.now());
+        recordMapper.save(record);
+//        record.setUpdateBalance();
     }
 }

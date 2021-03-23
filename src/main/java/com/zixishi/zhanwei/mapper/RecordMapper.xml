@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zixishi.zhanwei.mapper.RecordMapper">
+    <resultMap id="recordMap" type="record">
+        <id property="id" column="id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBalance" column="update_balance"/>
+        <result property="content" column="content"/>
+        <result property="type" column="type"/>
+        <association property="user" column="user_id" javaType="user" select="getUser">
+            <id property="id" column="id"/>
+            <result property="username" column="username"/>
+            <result property="avator" column="avator"/>
+            <result property="phone" column="phone"/>
+            <result property="createTime" column="create_time"/>
+            <result property="gender" column="gender"/>
+        </association>
+    </resultMap>
+
+
+    <select id="getUser" resultType="user">
+        select * from user where id = #{id}
+    </select>
+
+
+    <select id="search" resultMap="recordMap">
+        select * from record
+    </select>
+
+
+    <select id="count" resultType="long">
+        select count(*) from record
+    </select>
+
+    <insert id="save" parameterType="record">
+        insert into record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="updateBalance != null">
+                update_balance,
+            </if>
+            <if test="user != null">
+                user_id,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="updateBalance != null">
+                #{updateBalance},
+            </if>
+            <if test="user != null">
+                #{user.id},
+            </if>
+            <if test="content != null">
+                #{content},
+             </if>
+            <if test="type != null">
+                #{type},
+            </if>
+        </trim>
+    </insert>
+</mapper>

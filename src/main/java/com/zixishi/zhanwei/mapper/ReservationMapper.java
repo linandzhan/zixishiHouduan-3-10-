@@ -32,11 +32,15 @@ public interface ReservationMapper {
 
     List<Reservation> findCancelByUser(Long id, LocalDate bookDate);
 
-    List<Reservation> findFinishByUser(Long id, LocalDate bookDate);
+    List<Reservation> findFinishByUser(Long id, LocalDate bookDate,LocalDate searchDate);
 
     Long countCancelByUser(Long id, LocalDate bookDate);
 
-    Long countFinishByUser(Long id, LocalDate bookDate);
+    Long countFinishByUser(Long id, LocalDate bookDate,LocalDate searchDate);
 
     void cancel(Long id,String reason);
+
+    Reservation get(Long id);
+
+    List<Reservation> searchByStartAndEndAndArea(LocalDate searchStartDate, LocalDate searchEndDate, Long id);
 }

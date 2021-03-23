@@ -7,9 +7,12 @@ import com.zixishi.zhanwei.config.authorization.annotation.CurrentUser;
 import com.zixishi.zhanwei.config.authorization.annotation.RequiredPermission;
 import com.zixishi.zhanwei.config.authorization.annotation.RolePermission;
 import com.zixishi.zhanwei.mapper.AccountMapper;
+import com.zixishi.zhanwei.mapper.RecordMapper;
 import com.zixishi.zhanwei.mapper.UserMapper;
 import com.zixishi.zhanwei.model.Account;
+import com.zixishi.zhanwei.model.Record;
 import com.zixishi.zhanwei.model.User;
+import com.zixishi.zhanwei.service.RecordService;
 import com.zixishi.zhanwei.service.UserService;
 import com.zixishi.zhanwei.util.Pageable;
 import com.zixishi.zhanwei.util.RestResult;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +37,8 @@ public class UserController {
     private UserService userService;
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private RecordService recordService;
 
 
     /**
@@ -94,9 +100,17 @@ public class UserController {
 
 
         User attach = userService.attach(account.getId());
-        user.setBalance(attach.getBalance()+Double.parseDouble(rechargeMoney));
+        Double v = Double.parseDouble(rechargeMoney);
+        user.setBalance(attach.getBalance()+v);
 
         userMapper.updateBalance(user);
+        Record record = new Record();
+        record.setUpdateBalance(v);
+        record.setUser(user);
+        record.setContent("用户充值金额");
+        record.setType("收入");
+        record.setUpdateTime(LocalDateTime.now());
+        recordService.save(record);
 
         return RestResult.success("已成功充值");
     }

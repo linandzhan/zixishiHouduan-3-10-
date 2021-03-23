@@ -28,9 +28,18 @@ public class Clock {
     private LocalDateTime signoutTime;
 
     /**
-     * 结算状态 （根据该用户的套餐进行结算）
+     * 学习时长（以分钟为单位）
      */
-    private String settleStatus;
+    private Long styleLength;
+
+    /**
+     * 对哪个预约进行签到打卡
+     */
+    private Reservation reservation;
+    /**
+     * 是否对其进行评价
+     */
+    private Boolean haveComment;
 
 
 
