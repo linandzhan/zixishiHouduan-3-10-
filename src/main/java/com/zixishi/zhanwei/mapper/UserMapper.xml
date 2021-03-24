@@ -27,6 +27,14 @@
         </where>
     </select>
 
+    <select id="searchByUsername" resultType="long">
+        select count(*) from user where username = #{username}
+    </select>
+
+    <select id="searchByPhone" resultType="long">
+           select count(*) from user where phone = #{phone}
+    </select>
+
     <select id="count" resultType="long">
         select count(*) from user
         <where>

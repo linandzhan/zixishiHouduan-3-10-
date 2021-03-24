@@ -174,7 +174,7 @@ public class HttpUtil {
 //                .method("GET", null)
 //                .build();
 //        Response response = client.newCall(request).execute();
-        HttpResult httpResult = doGet("https://api.gugudata.com/barcode/qrcode?appkey=BLPTTYNNCYA4&content=http://www.baidu.com&size=500", null);
+        HttpResult httpResult = doGet("https://api.gugudata.com/barcode/qrcode?appkey=BLPTTYNNCYA4&content=http://192.168.0.47:8088/#/login&size=500", null);
         String body = httpResult.getBody();
 
         System.out.println(body);

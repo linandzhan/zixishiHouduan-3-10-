@@ -97,16 +97,29 @@ public class AreaController {
     public RestResult searchMoneyByAreaAndDate(@RequestBody JSONObject jsonObject) {
         String year = (String) jsonObject.get("year");
         String month = (String) jsonObject.get("month");
-        String year_ = year.substring(0, year.length() - 1);
-        String month_ = month.substring(0,month.length()-1);
-        System.out.println(year_);
-        System.out.println(month_);
-        if(Integer.parseInt(month_) < 10) {
-            month_ = "0"+month_;
+
+        LocalDate searchStartDate = null;
+        LocalDate searchEndDate = null;
+
+        if(!year.isEmpty() && !month.isEmpty()) {
+            String year_ = year.substring(0, year.length() - 1);
+            String month_ = month.substring(0,month.length()-1);
+            System.out.println(year_);
+            System.out.println(month_);
+            if(Integer.parseInt(month_) < 10) {
+                month_ = "0"+month_;
+            }
+            String date = year_+"-"+month_+"-"+"01";
+            searchStartDate = LocalDate.parse(date);
+            searchEndDate = searchStartDate.with(TemporalAdjusters.lastDayOfMonth());
+        }else{
+            searchStartDate = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
+            searchEndDate = searchStartDate.with(TemporalAdjusters.lastDayOfMonth());
         }
-        String date = year_+"-"+month_+"-"+"01";
-        LocalDate searchStartDate = LocalDate.parse(date);
-        LocalDate searchEndDate = searchStartDate.with(TemporalAdjusters.lastDayOfMonth());
+
+
+
+
 
         return areaService.searchMoneyByAreaAndDate(searchStartDate,searchEndDate);
     }

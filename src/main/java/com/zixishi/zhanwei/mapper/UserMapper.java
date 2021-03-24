@@ -19,4 +19,9 @@ public interface UserMapper {
     User get(Long id);
 
     User findByPhone(String phone);
+
+
+    Long searchByUsername(String username);
+
+    Long searchByPhone(String phone);
 }

@@ -1,13 +1,12 @@
 package com.zixishi.zhanwei.service.impl;
 
-import com.zixishi.zhanwei.dto.AreaDto;
-import com.zixishi.zhanwei.dto.SeatDTO;
-import com.zixishi.zhanwei.dto.TongJiArea;
+import com.zixishi.zhanwei.dto.*;
 import com.zixishi.zhanwei.mapper.AreaMapper;
 import com.zixishi.zhanwei.model.Area;
 import com.zixishi.zhanwei.model.Reservation;
 import com.zixishi.zhanwei.model.Seat;
 import com.zixishi.zhanwei.service.AreaService;
+import com.zixishi.zhanwei.service.RecordService;
 import com.zixishi.zhanwei.service.ReservationService;
 import com.zixishi.zhanwei.util.RestResult;
 import org.springframework.stereotype.Service;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 @Service
@@ -23,6 +23,8 @@ public class AreaServiceImpl implements AreaService {
     private AreaMapper areaMapper;
     @Resource
     private ReservationService reservationService;
+    @Resource
+    private RecordService recordService;
     @Override
     public List<Area> search() {
 
@@ -100,6 +102,15 @@ public class AreaServiceImpl implements AreaService {
     @Override
     public RestResult searchMoneyByAreaAndDate(LocalDate searchStartDate, LocalDate searchEndDate) {
         List<TongJiArea> areas = reservationService.searchByDate(searchStartDate,searchEndDate);
-        return RestResult.success(areas);
+
+
+
+        List<TongJiIncome> incomes =  recordService.searchIncomeByEveryMonth(searchStartDate);
+
+        TongJi tongJi = new TongJi();
+        tongJi.setAreas(areas);
+        tongJi.setIncomes(incomes);
+
+        return RestResult.success(tongJi);
     }
 }

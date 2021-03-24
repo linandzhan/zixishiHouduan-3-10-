@@ -49,7 +49,12 @@ public class UserServiceImpl implements UserService {
         account.setUsername(user.getUsername());
         account.setPhone(user.getPhone());
         account.setRole("user");
-        account.setPassword("123456");
+        if(user.getPassword() == null) {
+            account.setPassword("123456");
+        }else {
+            account.setPassword(user.getPassword());
+        }
+
         accountMapper.save(account);
 
         List<Role> roles = roleMapper.search();
@@ -59,7 +64,9 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-
+        if(user.getBalance() == null) {
+            user.setBalance(0D);
+        }
         user.setId(account.getId());
         user.setCreateTime(LocalDateTime.now());
         userMapper.save(user);

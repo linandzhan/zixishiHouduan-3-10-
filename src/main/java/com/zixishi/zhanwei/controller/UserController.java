@@ -121,16 +121,23 @@ public class UserController {
      * 新增用户（save)
      * @param
      */
-    @Authorization
+//    @Authorization
     @ApiOperation(value = "新增用户")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
     @PostMapping("/user/save")
-    @RolePermission(value = {"超级管理员","管理员"})
+    @RolePermission(value = {"超级管理员","管理员","用户"})
     public RestResult save(@RequestBody Map<String,User> userMap) {
         User user = userMap.get("user");
-
+       Long num =  userMapper.searchByUsername(user.getUsername());
+       if(num > 0) {
+           return RestResult.error("该用户名已经存在，请重新填写用户名");
+       }
+       Long num1 = userMapper.searchByPhone(user.getPhone());
+       if(num1 > 0) {
+           return RestResult.error("该电话已经被注册，请重新填写电话");
+       }
        userService.save(user);
         return RestResult.success("新增成功");
     }

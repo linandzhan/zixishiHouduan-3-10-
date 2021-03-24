@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.zixishi.zhanwei.dto.ListDTO;
 import com.zixishi.zhanwei.dto.ReservationSaveDTO;
 import com.zixishi.zhanwei.dto.TongJiArea;
+import com.zixishi.zhanwei.dto.TongJiIncome;
 import com.zixishi.zhanwei.mapper.AreaMapper;
 import com.zixishi.zhanwei.mapper.RecordMapper;
 import com.zixishi.zhanwei.mapper.ReservationMapper;
@@ -155,7 +156,7 @@ public class ReservationServiceImpl implements ReservationService {
         User user = new User();
         user.setId(account.getId());
         record.setUser(user);
-        record.setContent("取消预约退款到账");
+        record.setContent("取消预约退款");  //固定写法
         Reservation reservation = reservationMapper.get(id);
         record.setUpdateBalance(reservation.getPayAmount());
         record.setType("收入");
@@ -163,4 +164,6 @@ public class ReservationServiceImpl implements ReservationService {
         recordMapper.save(record);
 //        record.setUpdateBalance();
     }
+
+
 }

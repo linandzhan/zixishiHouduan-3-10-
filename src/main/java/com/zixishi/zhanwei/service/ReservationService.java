@@ -1,6 +1,7 @@
 package com.zixishi.zhanwei.service;
 
 import com.zixishi.zhanwei.dto.TongJiArea;
+import com.zixishi.zhanwei.dto.TongJiIncome;
 import com.zixishi.zhanwei.model.Account;
 import com.zixishi.zhanwei.model.Reservation;
 import com.zixishi.zhanwei.model.User;
@@ -30,4 +31,6 @@ public interface ReservationService {
     RestResult findFinishByUser(Long id, LocalDate bookDate, Pageable pageable,LocalDate searchDate);
 
     void cancelReservation(Long id, String reason, Account account);
+
+
 }
