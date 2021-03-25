@@ -1,15 +1,13 @@
 package com.zixishi.zhanwei.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.zixishi.zhanwei.dto.ListDTO;
-import com.zixishi.zhanwei.dto.ReservationSaveDTO;
-import com.zixishi.zhanwei.dto.TongJiArea;
-import com.zixishi.zhanwei.dto.TongJiIncome;
+import com.zixishi.zhanwei.dto.*;
 import com.zixishi.zhanwei.mapper.AreaMapper;
 import com.zixishi.zhanwei.mapper.RecordMapper;
 import com.zixishi.zhanwei.mapper.ReservationMapper;
 import com.zixishi.zhanwei.mapper.UserMapper;
 import com.zixishi.zhanwei.model.*;
+import com.zixishi.zhanwei.service.AccountService;
 import com.zixishi.zhanwei.service.ReservationService;
 import com.zixishi.zhanwei.util.Pageable;
 import com.zixishi.zhanwei.util.RestResult;
@@ -33,6 +31,8 @@ public class ReservationServiceImpl implements ReservationService {
     private RecordMapper recordMapper;
     @Resource
     private AreaMapper areaMapper;
+    @Resource
+    private AccountService accountService;
 
 
 
@@ -163,6 +163,27 @@ public class ReservationServiceImpl implements ReservationService {
         record.setUpdateTime(LocalDateTime.now());
         recordMapper.save(record);
 //        record.setUpdateBalance();
+    }
+
+    @Override
+    public RestResult getByUserToday(String username, String password) {
+        Account account = accountService.findByUsername(username);
+        if(account != null && !account.getPassword().equals(password)) {
+            return RestResult.error("密码错误获取不到预约信息");
+        }
+        List<Reservation> reservations = reservationMapper.searchByUserAndToday(account.getId(),LocalDate.now());
+        List<ReservationTodayByUserDTO> todayReservations = new ArrayList<>();
+        for (Reservation reservation : reservations) {
+            ReservationTodayByUserDTO todayReservation = new ReservationTodayByUserDTO();
+            String start = reservation.getStartTime().toString();
+            String end = reservation.getEndTime().toString();
+            String seatName = reservation.getSeat().getSeatName();
+            String description = start+"-"+end+"/"+seatName;
+            todayReservation.setLabel(description);
+            todayReservation.setValue(reservation.getId());
+            todayReservations.add(todayReservation);
+        }
+        return RestResult.success(todayReservations);
     }
 
 

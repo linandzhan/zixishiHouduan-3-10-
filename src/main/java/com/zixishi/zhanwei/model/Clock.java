@@ -1,7 +1,9 @@
 package com.zixishi.zhanwei.model;
 
-import java.time.LocalDateTime;
+import lombok.Data;
 
+import java.time.LocalDateTime;
+@Data
 public class Clock {
     private Long id;
 
@@ -25,12 +27,12 @@ public class Clock {
     /**
      * 签退时间
      */
-    private LocalDateTime signoutTime;
+    private LocalDateTime endTime;
 
     /**
      * 学习时长（以分钟为单位）
      */
-    private Long styleLength;
+    private Long length;
 
     /**
      * 对哪个预约进行签到打卡

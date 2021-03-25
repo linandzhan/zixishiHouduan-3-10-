@@ -33,4 +33,5 @@ public interface ReservationService {
     void cancelReservation(Long id, String reason, Account account);
 
 
+    RestResult getByUserToday(String username, String password);
 }

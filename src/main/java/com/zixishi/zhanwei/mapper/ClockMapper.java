@@ -8,4 +8,6 @@ import java.util.List;
 @Mapper
 public interface ClockMapper {
     List<Clock> search();
+
+    List<Clock> searchByReservation(Long id);
 }

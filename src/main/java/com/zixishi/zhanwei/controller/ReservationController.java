@@ -193,5 +193,24 @@ public class ReservationController {
         return RestResult.success("取消成功");
     }
 
+    /**
+     * 根据用户查询当天预约情况（search)
+     * @param
+     */
+    @ApiOperation(value = "根据用户查询当天预约情况")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
+    })
+//    @RolePermission(value = {"超级管理员","管理员","用户"})
+    @PostMapping("/reservation/getByUserToday")
+    public RestResult getByUserToday(@RequestBody JSONObject jsonObject) throws ParseException {
+        String username = (String) jsonObject.get("username");
+        String password = (String) jsonObject.get("password");
+
+
+        return reservationService.getByUserToday(username,password);
+    }
+
+
 
 }

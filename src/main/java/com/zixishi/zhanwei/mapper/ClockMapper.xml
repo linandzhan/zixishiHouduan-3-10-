@@ -4,8 +4,8 @@
     <resultMap id="clockMap" type="clock">
         <id property="id" column="id"/>
         <result property="signinTime" column="signin_time"/>
-        <result property="signoutTime" column="signout_time"/>
-        <result property="styleLength" column="style_length"/>
+        <result property="endTime" column="end_time"/>
+        <result property="length" column="length"/>
         <result property="haveComment" column="have_comment"/>
 
         <association property="user" column="user_id" javaType="user" select="getUser">
@@ -47,5 +47,9 @@
 
     <select id="search" resultMap="clockMap">
         select * from clock
+    </select>
+
+    <select id="searchByReservation" resultMap="clockMap">
+        select * from clock where reservation_id = #{id}
     </select>
 </mapper>

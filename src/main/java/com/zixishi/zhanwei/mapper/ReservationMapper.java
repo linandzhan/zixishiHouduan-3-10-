@@ -43,4 +43,6 @@ public interface ReservationMapper {
     Reservation get(Long id);
 
     List<Reservation> searchByStartAndEndAndArea(LocalDate searchStartDate, LocalDate searchEndDate, Long id);
+
+    List<Reservation> searchByUserAndToday(Long id,LocalDate today);
 }

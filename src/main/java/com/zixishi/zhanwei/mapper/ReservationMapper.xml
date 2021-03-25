@@ -176,4 +176,8 @@
     <select id="searchByStartAndEndAndArea" resultMap="reservationMap">
         select * from reservation where book_date &gt; #{searchStartDate} and book_date &lt; #{searchEndDate} and area_id = #{id}
     </select>
+
+    <select id="searchByUserAndToday" resultMap="reservationMap">
+        select * from reservation where user_id = #{id} and book_date = #{today}
+    </select>
 </mapper>
