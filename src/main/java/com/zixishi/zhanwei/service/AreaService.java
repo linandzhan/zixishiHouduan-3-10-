@@ -16,4 +16,6 @@ public interface AreaService {
     List<AreaDto> fillareaDtos(List<AreaDto> areaDtos);
 
     RestResult searchMoneyByAreaAndDate(LocalDate searchStartDate, LocalDate searchEndDate);
+
+    List<AreaDto> searchNowDTO();
 }

@@ -77,7 +77,7 @@ public class ReservationController {
      * @param
      */
     @Authorization
-    @ApiOperation(value = "预定座位")
+    @ApiOperation(value = "根据用户查找该用户下的预约历史")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
@@ -112,7 +112,7 @@ public class ReservationController {
      * @param
      */
     @Authorization
-    @ApiOperation(value = "预定座位")
+    @ApiOperation(value = "根据用户查找该用户下的预约历史")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })

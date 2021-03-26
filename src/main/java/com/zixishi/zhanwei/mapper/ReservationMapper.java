@@ -38,11 +38,12 @@ public interface ReservationMapper {
 
     Long countFinishByUser(Long id, LocalDate bookDate,LocalDate searchDate);
 
-    void cancel(Long id,String reason);
+    void cancel(Long id,String reason,Double returnMoney);
 
     Reservation get(Long id);
 
     List<Reservation> searchByStartAndEndAndArea(LocalDate searchStartDate, LocalDate searchEndDate, Long id);
 
     List<Reservation> searchByUserAndToday(Long id,LocalDate today);
+
 }

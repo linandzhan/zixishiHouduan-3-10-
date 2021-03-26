@@ -1,9 +1,10 @@
 package com.zixishi.zhanwei.util;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 
-import org.apache.catalina.connector.Request;
-import org.apache.catalina.connector.Response;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -165,6 +166,14 @@ public class HttpUtil {
         return map;
     }
 
+    public static  String getImgUrl(String body) {
+        String[] split = body.split(",");
+        for (String s : split) {
+            System.out.println(s);
+        }
+        return null;
+    }
+
 
     public static void main(String[] args) {
 //        OkHttpClient client = new OkHttpClient().newBuilder()
@@ -174,9 +183,17 @@ public class HttpUtil {
 //                .method("GET", null)
 //                .build();
 //        Response response = client.newCall(request).execute();
-        HttpResult httpResult = doGet("https://api.gugudata.com/barcode/qrcode?appkey=BLPTTYNNCYA4&content=http://192.168.0.47:8088/#/login&size=500", null);
+        HttpResult httpResult = doGet("https://api.gugudata.com/barcode/qrcode?appkey=BLPTTYNNCYA4&content=http://192.168.0.47:8088/%23/clock/signInOut&size=500", null);
         String body = httpResult.getBody();
+        JSONObject parse = (JSONObject) JSON.parse(body);
+        JSONObject data = (JSONObject) parse.get("Data");
+        JSONObject dataStatus = (JSONObject) parse.get("DataStatus");
+        String url = (String) data.get("Url");
+        String requestParameter = (String) dataStatus.get("RequestParameter");
+        System.out.println(requestParameter);
+        System.out.println(url);
 
-        System.out.println(body);
+
+
     }
 }

@@ -49,7 +49,82 @@
         select * from clock
     </select>
 
+    <select id="searchEndTimeIsNull" resultMap="clockMap">
+        select * from clock where end_time is null
+    </select>
+
     <select id="searchByReservation" resultMap="clockMap">
         select * from clock where reservation_id = #{id}
+    </select>
+
+
+    <insert id="save" parameterType="clock">
+        insert into clock
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="seat != null">
+                seat_id,
+            </if>
+            <if test="user != null">
+                user_id,
+            </if>
+            <if test="signinTime != null">
+                signin_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+            <if test="length != null">
+                length,
+            </if>
+            <if test="reservation != null">
+                reservation_id,
+            </if>
+            <if test="haveComment != null">
+                have_comment,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="seat != null">
+                #{seat.id},
+            </if>
+            <if test="user != null">
+                #{user.id},
+            </if>
+            <if test="signinTime != null">
+                #{signinTime},
+            </if>
+            <if test="endTime != null">
+                #{endTime},
+            </if>
+            <if test="length != null">
+                #{length},
+            </if>
+            <if test="reservation != null">
+                #{reservation.id},
+            </if>
+            <if test="haveComment != null">
+                #{haveComment},
+            </if>
+        </trim>
+    </insert>
+
+
+    <update id="update" parameterType="clock">
+        update clock
+        set end_time = #{endTime}
+        , length  = #{length}
+        where id = #{id}
+    </update>
+
+
+    <select id="searchBySeat" resultMap="clockMap">
+        select * from clock where seat_id = #{seatId} and end_time is null
     </select>
 </mapper>

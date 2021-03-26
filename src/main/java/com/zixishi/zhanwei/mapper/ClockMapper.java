@@ -10,4 +10,13 @@ public interface ClockMapper {
     List<Clock> search();
 
     List<Clock> searchByReservation(Long id);
+
+    void save(Clock clock);
+
+    void update(Clock clock);
+
+    List<Clock> searchBySeat(Long seatId);
+
+    List<Clock> searchEndTimeIsNull();
+
 }

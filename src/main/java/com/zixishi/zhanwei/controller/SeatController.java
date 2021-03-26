@@ -55,8 +55,8 @@ public class SeatController {
     @RolePermission(value = {"超级管理员","管理员","用户"})
     @PostMapping("/seat/search")
     public RestResult search() {
-        List<Area> areas = areaService.search();
-        List<AreaDto> myResult = areaService.searchDTO(LocalDate.now(), LocalTime.now(),LocalTime.now());
+//        List<Area> areas = areaService.search();
+        List<AreaDto> myResult = areaService.searchNowDTO();
 
         return RestResult.success(myResult);
     }

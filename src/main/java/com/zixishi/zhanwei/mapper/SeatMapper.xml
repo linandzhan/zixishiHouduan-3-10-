@@ -6,6 +6,7 @@
         <result property="enabled" column="enabled"/>
         <result property="seatName" column="seat_name"/>
         <result property="description" column="description"/>
+        <result property="status" column="status"/>
         <association property="area" column="area_id" javaType="area" select="getArea">
             <id property="id" column="id"/>
             <result property="name" column="name"/>
@@ -31,4 +32,8 @@
     <select id="get" parameterType="long" resultMap="seatMap">
         select * from seat where id = #{id}
     </select>
+
+    <update id="updateStaus" parameterType="seat">
+        update seat set status = #{status} where id = #{id}
+    </update>
 </mapper>

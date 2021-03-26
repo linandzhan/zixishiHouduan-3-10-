@@ -87,7 +87,7 @@ public class AreaController {
         return null;
     }
 
-    @ApiOperation(value = "根据id查询当前区域下的信息")
+    @ApiOperation(value = "统计")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })

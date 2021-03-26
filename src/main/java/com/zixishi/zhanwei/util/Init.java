@@ -2,12 +2,15 @@ package com.zixishi.zhanwei.util;
 
 import com.zixishi.zhanwei.config.authorization.annotation.Authorization;
 import com.zixishi.zhanwei.config.authorization.annotation.RolePermission;
+import com.zixishi.zhanwei.mapper.ClockMapper;
 import com.zixishi.zhanwei.mapper.PermissionMapper;
 import com.zixishi.zhanwei.mapper.RoleMapper;
-import com.zixishi.zhanwei.model.Permission;
+import com.zixishi.zhanwei.mapper.SeatMapper;
+import com.zixishi.zhanwei.model.*;
 
-import com.zixishi.zhanwei.model.Role;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -18,6 +21,9 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.URL;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -26,11 +32,16 @@ import static cn.hutool.core.util.ClassUtil.getClassLoader;
 
 
 @Component
+@EnableScheduling
 public class Init {
     @Resource
     private PermissionMapper permissionMapper;
     @Resource
     private RoleMapper roleMapper;
+    @Resource
+    private ClockMapper clockMapper;
+    @Resource
+    private SeatMapper seatMapper;
 
 
     public  static Set<Class<?>> getClasses(String packageName) throws IOException {
@@ -180,6 +191,30 @@ public class Init {
 
 
 
+
+    }
+
+
+    /**
+     * 检查忘记打签退卡的人，是否已经到了预约结束的时间.如果是，需要帮它打上退卡时间。
+     */
+    @Scheduled(fixedRate = 10000)
+    private void checkReservation() {
+        List<Clock> clocks = clockMapper.searchEndTimeIsNull();
+        for (Clock clock : clocks) {
+            Reservation reservation = clock.getReservation();
+            if(reservation.getEndTime().isBefore(LocalTime.now())) {
+                Clock newClock = new Clock();
+                newClock.setId(clock.getId());
+                newClock.setEndTime(LocalDateTime.now());
+                newClock.setLength(Duration.between(clock.getSigninTime(), LocalDateTime.now()).toMinutes());
+                clockMapper.update(newClock);
+                Seat seat = new Seat();
+                seat.setId(clock.getSeat().getId());
+                seat.setStatus(false);
+                seatMapper.updateStaus(seat);
+            }
+        }
 
     }
 

@@ -1,11 +1,14 @@
 package com.zixishi.zhanwei.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.zixishi.zhanwei.config.authorization.annotation.Authorization;
 import com.zixishi.zhanwei.config.authorization.annotation.RolePermission;
 import com.zixishi.zhanwei.mapper.ClockMapper;
 import com.zixishi.zhanwei.model.Clock;
 import com.zixishi.zhanwei.service.ClockService;
+import com.zixishi.zhanwei.util.HttpResult;
+import com.zixishi.zhanwei.util.HttpUtil;
 import com.zixishi.zhanwei.util.RestResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -50,5 +53,35 @@ public class ClockController {
         Integer id = (Integer) jsonObject.get("reservation");
 
         return  clockService.checkSignInOrOut(Long.parseLong(id.toString()));
+    }
+
+    @ApiOperation(value = "获取打卡二维码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
+    })
+    @PostMapping("/clock/getErWeiMa")
+    //    @RolePermission(value = {"用户","管理员","超级管理员"})
+    public RestResult getErWeiMa(@RequestBody JSONObject jsonObject) {
+        HttpResult httpResult = HttpUtil.doGet("https://api.gugudata.com/barcode/qrcode?appkey=BLPTTYNNCYA4&content=http://192.168.0.47:8088/%23/clock/signInOut&size=500", null);
+        String body = httpResult.getBody();
+        JSONObject parse = (JSONObject) JSON.parse(body);
+        JSONObject data = (JSONObject) parse.get("Data");
+        String url = (String) data.get("Url");
+        System.out.println(url);
+        return RestResult.success("返回成功",url);
+    }
+
+
+    @ApiOperation(value = "打卡操作")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
+    })
+    @PostMapping("/clock/sign")
+    public RestResult sign(@RequestBody JSONObject jsonObject) {
+        System.out.println(jsonObject);
+        Integer reservationId = (Integer) jsonObject.get("reservation");
+        String status = (String) jsonObject.get("status");
+        String result = clockService.sign(Long.parseLong(reservationId.toString()),status);
+        return RestResult.success("打卡成功",result);
     }
 }

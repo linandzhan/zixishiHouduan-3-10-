@@ -11,10 +11,12 @@ import com.zixishi.zhanwei.service.AccountService;
 import com.zixishi.zhanwei.service.ReservationService;
 import com.zixishi.zhanwei.util.Pageable;
 import com.zixishi.zhanwei.util.RestResult;
+
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -63,9 +65,15 @@ public class ReservationServiceImpl implements ReservationService {
         int i = 0;
         for (Area area : areas) {
                    List<Reservation> reservations =  reservationMapper.searchByStartAndEndAndArea(searchStartDate,searchEndDate,area.getId());
+
                    Double income = 0D;
                 for (Reservation reservation : reservations) {
-                    income = income + reservation.getPayAmount();
+                    if(reservation.getHaveUsing()) {
+                        income = income + reservation.getPayAmount();
+                    }else {
+                        income = income + (reservation.getPayAmount()-reservation.getReturnMoney());
+                    }
+
                 }
                 TongJiArea tongJiArea = new TongJiArea();
                 tongJiArea.setAreaId(area.getId());
@@ -93,9 +101,13 @@ public class ReservationServiceImpl implements ReservationService {
         save.setEndTime(endTime);
         save.setUsing(true);
         save.setMoney(moeny);
+        if(user.getBalance()-moeny < 0) {
+            return RestResult.error("用户余额不足，请去充钱");
+        }
         reservationMapper.save(save);
 
         User updateUser = new User();
+
         updateUser.setBalance(user.getBalance()-moeny);
         updateUser.setId(user.getId());
         userMapper.updateBalance(updateUser);
@@ -151,17 +163,37 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public void cancelReservation(Long id, String reason, Account account) {
-        reservationMapper.cancel(id,reason);
+
         Record record = new Record();
-        User user = new User();
-        user.setId(account.getId());
+
+        User user = userMapper.get(account.getId());
+        User newUser = new User();
+        newUser.setId(user.getId());
+
+
+
+
         record.setUser(user);
         record.setContent("取消预约退款");  //固定写法
         Reservation reservation = reservationMapper.get(id);
-        record.setUpdateBalance(reservation.getPayAmount());
+        LocalDate bookDate = reservation.getBookDate();
+
+        LocalDateTime start = LocalDateTime.of(bookDate, reservation.getStartTime());
+        Long hour = Duration.between(LocalDateTime.now(), start).toHours();
+        Double returnMoney = reservation.getPayAmount();
+        if(hour < 5) {
+            returnMoney = reservation.getPayAmount()/2;
+        }
+
+        record.setUpdateBalance(returnMoney);
+        newUser.setBalance(user.getBalance()+returnMoney);
+        userMapper.updateBalance(user);
+
+
         record.setType("收入");
         record.setUpdateTime(LocalDateTime.now());
         recordMapper.save(record);
+        reservationMapper.cancel(id,reason,returnMoney);
 //        record.setUpdateBalance();
     }
 

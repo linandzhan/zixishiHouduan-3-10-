@@ -35,4 +35,6 @@ public class Reservation {
     private String cancelReason;
 
     private Double payAmount;
+
+    private Double returnMoney;
 }

@@ -9,6 +9,7 @@
         <result property="have_using" column="haveUsing"/>
         <result property="pay_amount" column="payAmount"/>
         <result property="cancel_reason" column="cancelReason"/>
+        <result property="return_money" column="returnMoney"/>
         <association property="seat" column="seat_id" javaType="seat" select="getSeat">
             <id property="id" column="id"/>
             <result property="enabled" column="enabled"/>
@@ -169,7 +170,7 @@
 
 
     <update id="cancel">
-        update reservation set have_using = false , cancel_reason = #{reason} where id = #{id}
+        update reservation set have_using = false , cancel_reason = #{reason} ,return_money = #{returnMoney} where id = #{id}
     </update>
 
 
@@ -178,6 +179,9 @@
     </select>
 
     <select id="searchByUserAndToday" resultMap="reservationMap">
-        select * from reservation where user_id = #{id} and book_date = #{today}
+        select * from reservation where user_id = #{id} and book_date = #{today} and have_using is true
     </select>
+
+
+
 </mapper>

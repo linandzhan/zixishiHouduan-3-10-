@@ -16,4 +16,6 @@ public class Seat {
     private String seatName;
 
     private String description;
+
+    private Boolean status;
 }

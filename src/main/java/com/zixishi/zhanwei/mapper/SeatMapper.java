@@ -13,4 +13,5 @@ public interface SeatMapper {
 
     Seat get(Long id);
 
+    void updateStaus(Seat seat);
 }

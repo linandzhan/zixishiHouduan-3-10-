@@ -2,10 +2,13 @@ package com.zixishi.zhanwei.service.impl;
 
 import com.zixishi.zhanwei.dto.*;
 import com.zixishi.zhanwei.mapper.AreaMapper;
+import com.zixishi.zhanwei.mapper.ClockMapper;
 import com.zixishi.zhanwei.model.Area;
+import com.zixishi.zhanwei.model.Clock;
 import com.zixishi.zhanwei.model.Reservation;
 import com.zixishi.zhanwei.model.Seat;
 import com.zixishi.zhanwei.service.AreaService;
+import com.zixishi.zhanwei.service.ClockService;
 import com.zixishi.zhanwei.service.RecordService;
 import com.zixishi.zhanwei.service.ReservationService;
 import com.zixishi.zhanwei.util.RestResult;
@@ -25,6 +28,8 @@ public class AreaServiceImpl implements AreaService {
     private ReservationService reservationService;
     @Resource
     private RecordService recordService;
+    @Resource
+    private ClockMapper clockMapper;
     @Override
     public List<Area> search() {
 
@@ -59,6 +64,7 @@ public class AreaServiceImpl implements AreaService {
                 SeatDTO seatDTO = new SeatDTO();
                 seatDTO.setSeatId(seat.getId());
                 seatDTO.setSeatName(seat.getSeatName());
+                seatDTO.setStatus(seat.getStatus());
                 if(reservations.size() == 0) {
                     seatDTO.setStatus(false);
                 }
@@ -112,5 +118,41 @@ public class AreaServiceImpl implements AreaService {
         tongJi.setIncomes(incomes);
 
         return RestResult.success(tongJi);
+    }
+
+
+
+
+    @Override
+    public List<AreaDto> searchNowDTO() {
+        List<AreaDto> myResult  = new ArrayList<>();
+        List<Area> areas = areaMapper.search();
+
+        for(Area area:areas) {
+            AreaDto areaDto = new AreaDto();
+            areaDto.setAreaId(area.getId());
+            areaDto.setAreaName(area.getName());
+            areaDto.setAmount(area.getAmount());
+            List<SeatDTO> seatDTOS = new ArrayList<>();
+            List<Seat> seats = area.getSeatList();
+            for (Seat seat : seats) {
+                SeatDTO seatDTO = new SeatDTO();
+                seatDTO.setSeatId(seat.getId());
+                seatDTO.setSeatName(seat.getSeatName());
+                seatDTO.setStatus(seat.getStatus());
+                if(seatDTO.getStatus()) {
+                   List<Clock> clocks =  clockMapper.searchBySeat(seat.getId());
+                    seatDTO.setUsername(clocks.get(0).getUser().getUsername());
+                }
+
+
+                seatDTOS.add(seatDTO);
+            }
+
+            areaDto.setSeatDTO(seatDTOS);
+
+            myResult.add(areaDto);
+        }
+        return myResult;
     }
 }
