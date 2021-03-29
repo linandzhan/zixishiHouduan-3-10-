@@ -14,4 +14,8 @@ public interface AccountService {
     Long save(Account account);
 
     RestResult findRoleByAccount(Account account);
+
+    Account attach(Long id);
+
+    Account attach();
 }

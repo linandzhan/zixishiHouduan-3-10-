@@ -37,4 +37,8 @@ public class Reservation {
     private Double payAmount;
 
     private Double returnMoney;
+
+    private Boolean haveClock;
+
+    private String status;
 }

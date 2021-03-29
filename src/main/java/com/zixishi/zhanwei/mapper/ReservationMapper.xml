@@ -10,6 +10,8 @@
         <result property="pay_amount" column="payAmount"/>
         <result property="cancel_reason" column="cancelReason"/>
         <result property="return_money" column="returnMoney"/>
+        <result property="have_clock" column="haveClock"/>
+        <result property="status" column="status"/>
         <association property="seat" column="seat_id" javaType="seat" select="getSeat">
             <id property="id" column="id"/>
             <result property="enabled" column="enabled"/>
@@ -73,6 +75,12 @@
             <if test="money != null">
                 pay_amount,
             </if>
+            <if test="haveClock != null">
+                have_clock,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
         </trim>
 
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -100,6 +108,12 @@
             <if test="money != null">
                 #{money},
             </if>
+            <if test="haveClock != null">
+                #{haveClock},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
         </trim>
     </insert>
 
@@ -114,9 +128,7 @@
 
 
     <select id="findByUser" resultMap="reservationMap">
-                select * from reservation where user_id = #{userId} and have_using is true and ((start_time &gt; now() and book_date = #{bookDate})
-
-            or (book_date &gt;  #{bookDate}))
+                select * from reservation where user_id = #{userId} and have_using is true
     </select>
 
 
@@ -182,6 +194,45 @@
         select * from reservation where user_id = #{id} and book_date = #{today} and have_using is true
     </select>
 
+    <update id="updateHaveClock">
+        update reservation set have_clock = true where id = #{id}
+    </update>
 
 
+    <select id="search" resultMap="reservationMap">
+        select * from reservation
+        <where>
+            <if test="username != null and username != ''">
+                <bind name="pattern" value="'%' + username + '%'"/>
+                and username like #{pattern}
+            </if>
+            <if test="phone != null and phone != ''">
+                <bind name="pattern" value="'%' + phone + '%'"/>
+                and username like #{pattern}
+            </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="long">
+        select count(*) from reservation
+        <where>
+            <if test="username != null and username != ''">
+                <bind name="pattern" value="'%' + username + '%'"/>
+                and username like #{pattern}
+            </if>
+            <if test="phone != null and phone != ''">
+                <bind name="pattern" value="'%' + phone + '%'"/>
+                and username like #{pattern}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateStatus">
+        update reservation set status = #{status} where id = #{id}
+    </update>
+
+
+    <select id="searchByStatus" resultMap="reservationMap">
+        select * from reservation where status = #{status}
+    </select>
 </mapper>

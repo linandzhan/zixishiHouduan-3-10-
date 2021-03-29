@@ -3,9 +3,11 @@ package com.zixishi.zhanwei.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.zixishi.zhanwei.config.authorization.annotation.Authorization;
+import com.zixishi.zhanwei.config.authorization.annotation.CurrentUser;
 import com.zixishi.zhanwei.config.authorization.annotation.RolePermission;
 import com.zixishi.zhanwei.dto.ListDTO;
 import com.zixishi.zhanwei.mapper.RecordMapper;
+import com.zixishi.zhanwei.model.Account;
 import com.zixishi.zhanwei.model.Manager;
 import com.zixishi.zhanwei.model.Record;
 import com.zixishi.zhanwei.util.Pageable;
@@ -38,9 +40,9 @@ public class RecordController {
     })
     @PostMapping("/record/search")
 //    @RolePermission(value = {"管理员","超级管理员","用户"})
-    public RestResult search(@RequestBody Pageable pageable) {
+    public RestResult search(@RequestBody Pageable pageable, @CurrentUser Account account) {
         System.out.println(pageable);
-        List<Record> list =  PageHelper.startPage(pageable.getPage(),pageable.getSize()).doSelectPage(()->recordMapper.search());
+        List<Record> list =  PageHelper.startPage(pageable.getPage(),pageable.getSize()).doSelectPage(()->recordMapper.search(account.getId()));
         Long total = recordMapper.count();
         ListDTO listDTO = new ListDTO();
         listDTO.setTotal(total);

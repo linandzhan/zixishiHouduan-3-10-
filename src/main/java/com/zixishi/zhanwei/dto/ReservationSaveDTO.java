@@ -22,4 +22,8 @@ public class ReservationSaveDTO {
     private Boolean using;
 
     private Double money;
+
+    private Boolean haveClock;
+
+    private String status;
 }

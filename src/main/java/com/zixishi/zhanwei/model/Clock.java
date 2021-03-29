@@ -1,6 +1,8 @@
 package com.zixishi.zhanwei.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 @Data
@@ -21,12 +23,14 @@ public class Clock {
     /**
      * 签到时间
      */
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime signinTime;
 
 
     /**
      * 签退时间
      */
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 
     /**

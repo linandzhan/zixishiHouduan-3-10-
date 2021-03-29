@@ -14,6 +14,8 @@ import java.util.List;
 @Service
 public class AccountServiceImpl implements AccountService {
 
+    private static   Long id = null;
+
     @Resource
     private AccountMapper accountMapper;
     @Resource
@@ -45,5 +47,20 @@ public class AccountServiceImpl implements AccountService {
     public RestResult findRoleByAccount(Account account) {
        List<Role> roles =  accountMapper.findRoleByAccount(account.getId());
         return RestResult.success(roles);
+    }
+
+    @Override
+    public Account attach(Long id) {
+        this.id = id;
+        Account account = new Account();
+        account.setId(id);
+        return account;
+    }
+
+
+    public Account attach() {
+        Account account = new Account();
+        account.setId(this.id);
+        return account;
     }
 }

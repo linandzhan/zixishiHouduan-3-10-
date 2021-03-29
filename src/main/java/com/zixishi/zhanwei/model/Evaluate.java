@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class Evaluate {
     private Long id;
 
-    private Integer scores;
+    private Integer stars;
 
     private Boolean enabled;
 
@@ -19,4 +19,6 @@ public class Evaluate {
     private User user;
 
     private Clock clock;
+
+    private String content;
 }

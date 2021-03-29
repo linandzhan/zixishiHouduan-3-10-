@@ -2,10 +2,7 @@ package com.zixishi.zhanwei.util;
 
 import com.zixishi.zhanwei.config.authorization.annotation.Authorization;
 import com.zixishi.zhanwei.config.authorization.annotation.RolePermission;
-import com.zixishi.zhanwei.mapper.ClockMapper;
-import com.zixishi.zhanwei.mapper.PermissionMapper;
-import com.zixishi.zhanwei.mapper.RoleMapper;
-import com.zixishi.zhanwei.mapper.SeatMapper;
+import com.zixishi.zhanwei.mapper.*;
 import com.zixishi.zhanwei.model.*;
 
 import org.apache.commons.lang3.StringUtils;
@@ -42,6 +39,8 @@ public class Init {
     private ClockMapper clockMapper;
     @Resource
     private SeatMapper seatMapper;
+    @Resource
+    private ReservationMapper reservationMapper;
 
 
     public  static Set<Class<?>> getClasses(String packageName) throws IOException {
@@ -215,6 +214,29 @@ public class Init {
                 seatMapper.updateStaus(seat);
             }
         }
+
+
+        List<Reservation> reservations  = reservationMapper.searchByStatus("待开始");
+
+        for (Reservation reservation : reservations) {
+            LocalDateTime start = LocalDateTime.of(reservation.getBookDate(), reservation.getStartTime());
+
+            if(start.isBefore(LocalDateTime.now()) && !reservation.getHaveClock()) {
+                //没有进行打卡的，且时间已经到了自习时间的，则为进行中
+                reservationMapper.updateStatus(reservation.getId(),"进行中");
+            }
+
+
+        }
+        List<Reservation> reservations1  = reservationMapper.searchByStatus("进行中");
+        for (Reservation reservation : reservations1) {
+            LocalDateTime end = LocalDateTime.of(reservation.getBookDate(), reservation.getEndTime());
+            if(end.isBefore(LocalDateTime.now())) {
+                reservationMapper.updateStatus(reservation.getId(),"已结束");
+            }
+        }
+
+
 
     }
 

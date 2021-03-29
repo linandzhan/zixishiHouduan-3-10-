@@ -46,4 +46,15 @@ public interface ReservationMapper {
 
     List<Reservation> searchByUserAndToday(Long id,LocalDate today);
 
+    void updateHaveClock(Long id);
+
+    Long count(String username, String phone);
+
+    List<Reservation> search(String username, String phone);
+
+    void updateStatus(Long id,String status);
+
+
+
+    List<Reservation> searchByStatus(String status);
 }

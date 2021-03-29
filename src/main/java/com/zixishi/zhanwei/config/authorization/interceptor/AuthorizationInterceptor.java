@@ -75,6 +75,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
                 //根据角色查询权限，符合权限的放行
                 // 验证权限
                 if (this.hasPermission(request,method,model)) {
+                   Account account =  accountService.attach(model.getId());
                     return true;
                 }else {
                     returnJson(response,"{\"code\":400,\"msg\":\"当前用户没有权限访问\"}");

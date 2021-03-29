@@ -71,6 +71,7 @@ public class ClockServiceImpl implements ClockService {
             seat.setId(reservation.getSeat().getId());
             seat.setStatus(true);  //表示有人在自习了
             seatMapper.updateStaus(seat);
+            reservationMapper.updateHaveClock(id);
             return "签到成功";
         }else if("签退打卡".equals(status)) {
             List<Clock> clocks = clockMapper.searchByReservation(id);
@@ -91,6 +92,7 @@ public class ClockServiceImpl implements ClockService {
             seat.setId(reservation.getSeat().getId());
             seat.setStatus(false);  //表示有人签退了
             seatMapper.updateStaus(seat);
+            reservationMapper.updateStatus(id,"已结束");
             return "签退成功";
         }
         return null;

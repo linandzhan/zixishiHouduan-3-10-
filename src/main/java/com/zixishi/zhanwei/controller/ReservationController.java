@@ -69,7 +69,31 @@ public class ReservationController {
         return reservationService.save(reservationDate,areaId,phone,start,end,seatId,money);
     }
 
+    /**
+     * 管理员查询预约（search)
+     * @param
+     */
+    @Authorization
+    @ApiOperation(value = "预约查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
+    })
+//    @RolePermission(value = {"超级管理员","管理员","用户"})
+    @PostMapping("/reservation/search")
+    public RestResult search(@RequestBody JSONObject jsonObject) {
 
+        LinkedHashMap pageable = (LinkedHashMap) jsonObject.get("pageable");
+        Integer size = (Integer) pageable.get("size");
+        Integer page = (Integer) pageable.get("page");
+        Pageable pageable1 = new Pageable();
+        pageable1.setPage(page);
+        pageable1.setSize(size);
+        LinkedHashMap user = (LinkedHashMap) jsonObject.get("user");
+        String username = (String) user.get("username");
+        String phone = (String) user.get("phone");
+
+        return reservationService.search(pageable1,username,phone);
+    }
 
 
     /**

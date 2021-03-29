@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zixishi.zhanwei.mapper.EvaluateMapper">
+    <resultMap id="evaluateMap" type="evaluate">
+        <id property="id" column="id"/>
+        <result property="stars" column="stars"/>
+        <result property="enabled" column="enabled"/>
+        <result property="createTime" column="create_time"/>
+        <result property="content" column="content"/>
+        <association property="user" column="user_id" javaType="user" select="getUser">
+            <id property="id" column="id"/>
+            <result property="username" column="username"/>
+            <result property="avator" column="avator"/>
+            <result property="phone" column="phone"/>
+            <result property="gender" column="gender"/>
+            <result property="balance" column="balance"/>
+            <result property="password" column="password"/>
+            <result property="createTime" column="create_time"/>
+        </association>
+        <association property="clock" column="clock_id" javaType="clock" select="getClock">
+            <id property="id" column="id"/>
+            <result property="signinTime" column="signin_time"/>
+            <result property="endTime" column="end_time"/>
+            <result property="length" column="length"/>
+            <result property="haveComment" column="have_comment"/>
+        </association>
+    </resultMap>
+
+    <select id="getUser" resultType="user">
+        select * from user where id = #{id}
+    </select>
+
+    <select id="getClock" resultType="clock">
+        select * from clock where id = #{id}
+    </select>
+
+
+    <insert id="save" parameterType="evaluate">
+        insert into evaluate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="stars != null">
+                stars,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="enabled != null">
+                enabled,
+            </if>
+            <if test="user != null">
+                user_id,
+            </if>
+            <if test="clock != null">
+                clock_id,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="stars != null">
+                #{stars},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="enabled != null">
+                #{enabled},
+            </if>
+            <if test="user != null">
+                #{user.id},
+            </if>
+            <if test="clock != null">
+                #{clock.id},
+            </if>
+            <if test="content != null">
+                #{content},
+            </if>
+        </trim>
+    </insert>
+
+
+    <select id="findByClock" resultMap="evaluateMap">
+        select * from evaluate where clock_id = #{clockId}
+    </select>
+</mapper>

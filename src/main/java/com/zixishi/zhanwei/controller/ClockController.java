@@ -2,13 +2,17 @@ package com.zixishi.zhanwei.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
 import com.zixishi.zhanwei.config.authorization.annotation.Authorization;
 import com.zixishi.zhanwei.config.authorization.annotation.RolePermission;
+import com.zixishi.zhanwei.dto.ClockListDTO;
+import com.zixishi.zhanwei.dto.ListDTO;
 import com.zixishi.zhanwei.mapper.ClockMapper;
 import com.zixishi.zhanwei.model.Clock;
 import com.zixishi.zhanwei.service.ClockService;
 import com.zixishi.zhanwei.util.HttpResult;
 import com.zixishi.zhanwei.util.HttpUtil;
+import com.zixishi.zhanwei.util.Pageable;
 import com.zixishi.zhanwei.util.RestResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -19,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @RestController
@@ -34,12 +40,55 @@ public class ClockController {
             @ApiImplicitParam(name = "authorization", value = "authorization", required = true, dataType = "string", paramType = "header"),
     })
     @Authorization
-    @PostMapping("/clock/searchUncoment")
+    @PostMapping("/clock/searchClcok")
 //    @RolePermission(value = {"用户","管理员","超级管理员"})
-    public RestResult searchUncoment(@RequestBody JSONObject jsonObject) {
-        List<Clock> clockList = clockMapper.search();
-        System.out.println(clockList);
-        return null;
+    public RestResult searchClcok(@RequestBody JSONObject jsonObject) {
+        LinkedHashMap pageable1 = (LinkedHashMap) jsonObject.get("pageable");
+        Integer page = (Integer) pageable1.get("page");
+        Integer size = (Integer) pageable1.get("size");
+        Boolean isComment = (Boolean) jsonObject.get("isComment");
+        Pageable pageable = new Pageable();
+        pageable.setSize(size);
+        pageable.setPage(page);
+        ListDTO listDTO = new ListDTO();
+        List<ClockListDTO> clockListDTOS = new ArrayList<>();
+        if(isComment) {
+            //已评价
+            List<Clock> clockList = PageHelper.startPage(pageable.getPage(),pageable.getSize()).doSelectPage(()->clockMapper.searchHaveComment());
+            Long total = clockMapper.countHaveComment();
+            for (Clock clock : clockList) {
+                ClockListDTO clockListDTO = new ClockListDTO();
+                clockListDTO.setSigninTime(clock.getSigninTime());
+                clockListDTO.setEndTime(clock.getEndTime());
+                clockListDTO.setLength(clock.getLength());
+                clockListDTO.setSeatName(clock.getSeat().getSeatName());
+                clockListDTO.setId(clock.getId());
+                clockListDTOS.add(clockListDTO);
+            }
+
+            listDTO.setItems(clockListDTOS);
+            listDTO.setTotal(total);
+        }else {
+            //未评价
+            List<Clock> clockList = PageHelper.startPage(pageable.getPage(),pageable.getSize()).doSelectPage(()->clockMapper.search());
+            Long total = clockMapper.count();
+
+            for (Clock clock : clockList) {
+                ClockListDTO clockListDTO = new ClockListDTO();
+                clockListDTO.setSigninTime(clock.getSigninTime());
+                clockListDTO.setEndTime(clock.getEndTime());
+                clockListDTO.setLength(clock.getLength());
+                clockListDTO.setSeatName(clock.getSeat().getSeatName());
+                clockListDTO.setId(clock.getId());
+                clockListDTOS.add(clockListDTO);
+            }
+
+            listDTO.setItems(clockListDTOS);
+            listDTO.setTotal(total);
+        }
+
+
+        return RestResult.success(listDTO);
     }
 
 

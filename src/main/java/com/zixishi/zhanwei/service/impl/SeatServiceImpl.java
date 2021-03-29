@@ -38,7 +38,8 @@ public class SeatServiceImpl implements SeatService {
 
     @Override
     public List<SeatDTO> searchByArea(Long id, LocalDate searchTime) {
-        List<AreaDto> areaDtos = areaService.searchDTO(searchTime, LocalTime.now(),LocalTime.now());
+//        List<AreaDto> areaDtos = areaService.searchDTO(searchTime, LocalTime.now(),LocalTime.now());
+        List<AreaDto> areaDtos = areaService.searchNowDTO();
         List<SeatDTO> seatDTOS = null;
         for (AreaDto areaDto : areaDtos) {
             if(areaDto.getAreaId() == id) {

@@ -19,4 +19,11 @@ public interface ClockMapper {
 
     List<Clock> searchEndTimeIsNull();
 
+    Long count();
+
+    void updateHaveComentIsTrue(Clock clock);
+
+    List<Clock> searchHaveComment();
+
+    Long countHaveComment();
 }

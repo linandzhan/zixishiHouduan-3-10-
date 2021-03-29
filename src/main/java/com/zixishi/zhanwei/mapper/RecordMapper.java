@@ -8,7 +8,7 @@ import java.util.List;
 
 @Mapper
 public interface RecordMapper {
-    List<Record> search();
+    List<Record> search(Long userId);
 
     void save(Record record);
 

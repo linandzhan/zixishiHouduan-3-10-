@@ -34,4 +34,6 @@ public interface ReservationService {
 
 
     RestResult getByUserToday(String username, String password);
+
+    RestResult search(Pageable pageable, String username, String phone);
 }

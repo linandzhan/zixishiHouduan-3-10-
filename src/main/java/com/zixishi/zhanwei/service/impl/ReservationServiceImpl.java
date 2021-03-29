@@ -2,10 +2,7 @@ package com.zixishi.zhanwei.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.zixishi.zhanwei.dto.*;
-import com.zixishi.zhanwei.mapper.AreaMapper;
-import com.zixishi.zhanwei.mapper.RecordMapper;
-import com.zixishi.zhanwei.mapper.ReservationMapper;
-import com.zixishi.zhanwei.mapper.UserMapper;
+import com.zixishi.zhanwei.mapper.*;
 import com.zixishi.zhanwei.model.*;
 import com.zixishi.zhanwei.service.AccountService;
 import com.zixishi.zhanwei.service.ReservationService;
@@ -35,6 +32,8 @@ public class ReservationServiceImpl implements ReservationService {
     private AreaMapper areaMapper;
     @Resource
     private AccountService accountService;
+    @Resource
+    private ClockMapper clockMapper;
 
 
 
@@ -101,6 +100,21 @@ public class ReservationServiceImpl implements ReservationService {
         save.setEndTime(endTime);
         save.setUsing(true);
         save.setMoney(moeny);
+        save.setHaveClock(false);
+
+        LocalDateTime start = LocalDateTime.of(reservationDate, startTime);
+        LocalDateTime end = LocalDateTime.of(reservationDate,endTime);
+
+        if(start.isBefore(LocalDateTime.now()) && end.isAfter(LocalDateTime.now())) {
+            //如果是今天的预约
+            save.setStatus("进行中");
+        }else if (start.isAfter(LocalDateTime.now())) {
+            save.setStatus("待开始");
+        }else if(end.isBefore(LocalDateTime.now())) {
+            save.setStatus("已结束");
+        }
+
+
         if(user.getBalance()-moeny < 0) {
             return RestResult.error("用户余额不足，请去充钱");
         }
@@ -216,6 +230,32 @@ public class ReservationServiceImpl implements ReservationService {
             todayReservations.add(todayReservation);
         }
         return RestResult.success(todayReservations);
+    }
+
+    @Override
+    public RestResult search(Pageable pageable, String username, String phone) {
+        List<Reservation> reservations = PageHelper.startPage(pageable.getPage(),pageable.getSize()).doSelectPage(()->reservationMapper.search(username,phone));
+        List<ReservationListDTO> reservationListDTOS = new ArrayList<>();
+        for (Reservation reservation : reservations) {
+            ReservationListDTO reservationListDTO = new ReservationListDTO();
+            reservationListDTO.setBookDate(reservation.getBookDate());
+            reservationListDTO.setStartTime(reservation.getStartTime());
+            reservationListDTO.setEndTime(reservation.getEndTime());
+            reservationListDTO.setSeatName(reservation.getSeat().getSeatName());
+            reservationListDTO.setUsername(reservation.getUser().getUsername());
+            List<Clock> clocks = clockMapper.searchByReservation(reservation.getId());
+            if(!clocks.isEmpty()) {
+                reservationListDTO.setClockId(clocks.get(0).getId());
+                reservationListDTO.setHaveComment(clocks.get(0).getHaveComment());
+            }
+
+            reservationListDTOS.add(reservationListDTO);
+        }
+       Long total =  reservationMapper.count(username,phone);
+        ListDTO listDTO = new ListDTO();
+        listDTO.setTotal(total);
+        listDTO.setItems(reservationListDTOS);
+        return RestResult.success(listDTO);
     }
 
 

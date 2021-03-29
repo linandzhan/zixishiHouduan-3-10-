@@ -46,7 +46,11 @@
 
 
     <select id="search" resultMap="clockMap">
-        select * from clock
+        select * from clock where have_comment is false
+    </select>
+
+    <select id="searchHaveComment" resultMap="clockMap">
+        select * from clock where have_comment is true
     </select>
 
     <select id="searchEndTimeIsNull" resultMap="clockMap">
@@ -123,8 +127,20 @@
         where id = #{id}
     </update>
 
+    <update id="updateHaveComentIsTrue" parameterType="clock">
+        update clock set have_comment = true where id = #{id}
+    </update>
+
 
     <select id="searchBySeat" resultMap="clockMap">
         select * from clock where seat_id = #{seatId} and end_time is null
+    </select>
+
+
+    <select id="count" resultType="long">
+        select count(*) from clock where have_comment is false
+    </select>
+    <select id="countHaveComment" resultType="long">
+        select count(*) from clock where have_comment is true
     </select>
 </mapper>
