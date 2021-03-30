@@ -14,7 +14,11 @@ public interface RecordMapper {
 
     Long count();
 
-    Double searchIncome(LocalDate fistDay, LocalDate lastDay);
+    Double searchIncome(LocalDate firstDay, LocalDate lastDay);
 
-    Double searchCancelMoney(LocalDate fistDay, LocalDate lastDay);
+    Double searchCancelMoney(LocalDate firstDay, LocalDate lastDay);
+
+
+
+    Double searchPayByUser(Long id,LocalDate firstDay,LocalDate lastDay);
 }

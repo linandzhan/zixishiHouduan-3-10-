@@ -22,10 +22,7 @@ public class Package {
      * 该套餐对应的价格
      */
     private Double price;
-    /**
-     * 截止有效期
-     */
-    private LocalDate validUnitTime;
+
     /**
      * 套餐数量 (比如一个月，一天，一年）
      */
@@ -34,14 +31,9 @@ public class Package {
      * 套餐描述
      */
     private String description;
-
     /**
-     * 属于哪个分类
+     * 单位（年，月，日）
      */
-    private Category category;
-    /**
-     * 属于哪个区域的
-     */
-    private List<Area> areaList;
+    private String unit;
 
 }

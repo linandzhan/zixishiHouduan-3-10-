@@ -25,7 +25,6 @@ public class User {
     /**
      * 用户的套餐余额
      */
-    private List<PackageBalance> packageBalanceList;
 
     private Double balance;
 

@@ -186,8 +186,8 @@
     </update>
 
 
-    <select id="searchByStartAndEndAndArea" resultMap="reservationMap">
-        select * from reservation where book_date &gt; #{searchStartDate} and book_date &lt; #{searchEndDate} and area_id = #{id}
+    <select id="searchByStartAndEndAndArea" resultType="Long">
+        select count(*) from reservation where book_date &gt; #{searchStartDate} and book_date &lt; #{searchEndDate} and area_id = #{id} and have_using is true
     </select>
 
     <select id="searchByUserAndToday" resultMap="reservationMap">
@@ -204,11 +204,11 @@
         <where>
             <if test="username != null and username != ''">
                 <bind name="pattern" value="'%' + username + '%'"/>
-                and username like #{pattern}
+                and user_id in (select id from user where username like #{pattern})
             </if>
             <if test="phone != null and phone != ''">
                 <bind name="pattern" value="'%' + phone + '%'"/>
-                and username like #{pattern}
+                and seat_id in (select id from seat where seat_name like #{pattern})
             </if>
         </where>
     </select>
@@ -218,11 +218,11 @@
         <where>
             <if test="username != null and username != ''">
                 <bind name="pattern" value="'%' + username + '%'"/>
-                and username like #{pattern}
+                and user_id in (select id from user where username like #{pattern})
             </if>
             <if test="phone != null and phone != ''">
                 <bind name="pattern" value="'%' + phone + '%'"/>
-                and username like #{pattern}
+                and seat_id in (select id from seat where seat_name like #{pattern})
             </if>
         </where>
     </select>
@@ -234,5 +234,16 @@
 
     <select id="searchByStatus" resultMap="reservationMap">
         select * from reservation where status = #{status}
+    </select>
+
+
+    <select id="tongJiyUser" resultType="long">
+        select count(*) from reservation where user_id = #{id} and have_using is true and book_date &gt;= #{firstDay} and  book_date &lt;= #{lastDay}
+    </select>
+
+
+    <select id="searchUserLikeArea" resultType="string">
+          select a.name
+ from reservation as r left join area as a on r.area_id = a.id  WHERE r.user_id = #{id} group by r.area_id order by count(r.area_id) desc
     </select>
 </mapper>

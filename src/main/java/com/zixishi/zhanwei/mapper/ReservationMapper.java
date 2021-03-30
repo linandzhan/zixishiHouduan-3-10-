@@ -42,7 +42,7 @@ public interface ReservationMapper {
 
     Reservation get(Long id);
 
-    List<Reservation> searchByStartAndEndAndArea(LocalDate searchStartDate, LocalDate searchEndDate, Long id);
+    Long searchByStartAndEndAndArea(LocalDate searchStartDate, LocalDate searchEndDate, Long id);
 
     List<Reservation> searchByUserAndToday(Long id,LocalDate today);
 
@@ -57,4 +57,8 @@ public interface ReservationMapper {
 
 
     List<Reservation> searchByStatus(String status);
+
+    Long tongJiyUser(Long id, LocalDate firstDay, LocalDate lastDay);
+
+    List<String> searchUserLikeArea(Long id);
 }

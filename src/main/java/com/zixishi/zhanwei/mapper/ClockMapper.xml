@@ -46,11 +46,11 @@
 
 
     <select id="search" resultMap="clockMap">
-        select * from clock where have_comment is false
+                select * from clock where user_id = #{id} and have_comment is false
     </select>
 
     <select id="searchHaveComment" resultMap="clockMap">
-        select * from clock where have_comment is true
+        select * from clock where user_id = #{id} and have_comment is true
     </select>
 
     <select id="searchEndTimeIsNull" resultMap="clockMap">
@@ -138,9 +138,10 @@
 
 
     <select id="count" resultType="long">
-        select count(*) from clock where have_comment is false
+        select count(*) from clock where user_id = #{id} and have_comment is false
     </select>
+
     <select id="countHaveComment" resultType="long">
-        select count(*) from clock where have_comment is true
+        select count(*) from clock where user_id = #{id} and have_comment is true
     </select>
 </mapper>

@@ -1,23 +1,35 @@
 package com.zixishi.zhanwei.service.impl;
 
+import com.zixishi.zhanwei.dto.LeaderBoardDTO;
 import com.zixishi.zhanwei.dto.TongJiIncome;
 import com.zixishi.zhanwei.mapper.RecordMapper;
+import com.zixishi.zhanwei.mapper.ReservationMapper;
+import com.zixishi.zhanwei.mapper.UserMapper;
 import com.zixishi.zhanwei.model.Record;
 import com.zixishi.zhanwei.model.User;
 import com.zixishi.zhanwei.service.RecordService;
+import com.zixishi.zhanwei.service.UserService;
+import com.zixishi.zhanwei.util.RestResult;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
 public class RecordServiceImpl implements RecordService {
     @Resource
     private RecordMapper recordMapper;
+    @Resource
+    private UserMapper userMapper;
+    @Resource
+    private UserService userService;
+    @Resource
+    private ReservationMapper reservationMapper;
 
 
     @Override
@@ -49,5 +61,46 @@ public class RecordServiceImpl implements RecordService {
         }
 
         return incomes;
+    }
+
+    @Override
+    public RestResult leaderBoard(LocalDate start,LocalDate end) {
+        List<User> users = userMapper.search(null, null);
+
+        List<LeaderBoardDTO> leaderBoardDTOS = new ArrayList<>();
+        int count = 0;
+        for (User user : users) {
+//            if(count == 10) {
+//                return RestResult.success(leaderBoardDTOS);
+//            }
+
+            LeaderBoardDTO leaderBoardDTO = new LeaderBoardDTO();
+            leaderBoardDTO.setId(user.getId());
+            leaderBoardDTO.setUsername(user.getUsername());
+           Double amount =  recordMapper.searchPayByUser(user.getId(),start,end);
+           leaderBoardDTO.setAmount(amount);
+            Long number =   reservationMapper.tongJiyUser(user.getId(),start,end);
+            leaderBoardDTO.setNumber(number);
+            List<String> areaNames = reservationMapper.searchUserLikeArea(user.getId());
+            if(!areaNames.isEmpty()) {
+                leaderBoardDTO.setAreaNameLike(areaNames.get(0));
+            }else {
+                leaderBoardDTO.setAreaNameLike("没有");
+            }
+
+            leaderBoardDTOS.add(leaderBoardDTO);
+
+//            count++;
+        }
+
+        Collections.sort(leaderBoardDTOS, new Comparator<LeaderBoardDTO>() {
+            @Override
+            public int compare(LeaderBoardDTO t2, LeaderBoardDTO t1) {
+                double v = t1.getAmount() - t2.getAmount();
+                return (int) v;
+            }
+        });
+
+        return RestResult.success(leaderBoardDTOS);
     }
 }

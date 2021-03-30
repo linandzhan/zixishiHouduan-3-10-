@@ -7,7 +7,7 @@ import java.util.List;
 
 @Mapper
 public interface ClockMapper {
-    List<Clock> search();
+    List<Clock> search(Long id);
 
     List<Clock> searchByReservation(Long id);
 
@@ -19,11 +19,11 @@ public interface ClockMapper {
 
     List<Clock> searchEndTimeIsNull();
 
-    Long count();
+    Long count(Long id);
 
     void updateHaveComentIsTrue(Clock clock);
 
-    List<Clock> searchHaveComment();
+    List<Clock> searchHaveComment(Long id);
 
-    Long countHaveComment();
+    Long countHaveComment(Long id);
 }

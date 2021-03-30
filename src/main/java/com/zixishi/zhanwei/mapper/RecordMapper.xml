@@ -78,10 +78,16 @@
     </insert>
 
     <select id="searchIncome" resultType="double">
-        select COALESCE(sum(update_balance),0) as update_time  from record where type = '支出' and update_time &gt;= #{fistDay} and  update_time &lt;= #{lastDay}
+        select COALESCE(sum(update_balance),0) as update_time  from record where type = '支出' and update_time &gt;= #{firstDay} and  update_time &lt;= #{lastDay}
     </select>
 
     <select id="searchCancelMoney" resultType="double">
-        select COALESCE(sum(update_balance),0) as update_time  from record where content = '取消预约退款' and update_time &gt;= #{fistDay} and  update_time &lt;= #{lastDay}
+        select COALESCE(sum(update_balance),0) as update_time  from record where content = '取消预约退款' and update_time &gt;= #{firstDay} and  update_time &lt;= #{lastDay}
     </select>
+
+        <select id="searchPayByUser" resultType="double">
+             select    (select COALESCE(sum(update_balance),0) from record where  type = '支出' and user_id = #{id} and update_time &gt;= #{firstDay} and  update_time &lt;= #{lastDay} ) - (select COALESCE(sum(update_balance),0) from record where  content = '取消预约退款' and user_id = #{id} and update_time &gt;= #{firstDay} and  update_time &lt;= #{lastDay} )  as amount
+        </select>
+
+
 </mapper>

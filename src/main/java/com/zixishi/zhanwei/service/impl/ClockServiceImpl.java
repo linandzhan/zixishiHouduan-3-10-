@@ -37,6 +37,10 @@ public class ClockServiceImpl implements ClockService {
             description = "该自习还未开始";
             return RestResult.success("返回成功",description);
         }
+        if( reservation.getEndTime().isBefore(LocalTime.now())) {
+            description = "该自习已结束";
+            return RestResult.success("返回成功",description);
+        }
         List<Clock> clocks =  clockMapper.searchByReservation(id);
         if(clocks.isEmpty()) {
             description = "签到打卡";
@@ -47,7 +51,7 @@ public class ClockServiceImpl implements ClockService {
             if(signoutTime == null) {
                 description = "签退打卡";
                return RestResult.success("返回成功",description);
-            }else if (signoutTime!=null || reservation.getEndTime().isBefore(LocalTime.now())) {
+            }else if (signoutTime!=null) {
                 description ="该自习已结束";
              return    RestResult.success("返回成功",description);
             }

@@ -76,7 +76,7 @@ public class AreaController {
 //    @RolePermission(value = {"用户","管理员","超级管理员"})
     public RestResult getById(@RequestBody JSONObject jsonObject) {
         String id = (String) jsonObject.get("id");
-        List<AreaDto> areaDtos = areaService.searchDTO(null, null, null);
+        List<AreaDto> areaDtos = areaService.searchNowDTO();
         System.out.println(areaDtos);
         List<AreaDto> fillareaDtos = areaService.fillareaDtos(areaDtos);
         for (AreaDto fillareaDto : fillareaDtos) {

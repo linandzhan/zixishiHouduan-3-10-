@@ -5,26 +5,19 @@
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="price" column="price"/>
-        <result property="validUnitTime" column="valid_unit_time"/>
         <result property="amount" column="amount"/>
         <result property="description" column="description"/>
-        <association property="category" column="category_id" javaType="category" select="getCategory">
-            <id property="id" column="id"/>
-            <result property="name" column="name"/>
-            <result property="type" column="type"/>
-            <result property="enabled" column="enabled"/>
-            <result property="description" column="description"/>
-        </association>
+        <result property="unit" column="unit"/>
     </resultMap>
 
-
-    <select id="getCategory" resultType="category">
-        select * from category where id=#{id}
+    <select id="search" resultMap="packageMap">
+        select * from package
     </select>
 
-    <select id="findOne" resultMap="packageMap">
-        select * from package where id=#{id}
+    <select id="get" resultMap="packageMap">
+        select * from package where id = #{id}
     </select>
+
 
 
 

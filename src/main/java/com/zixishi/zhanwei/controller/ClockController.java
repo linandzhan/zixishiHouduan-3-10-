@@ -4,10 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.zixishi.zhanwei.config.authorization.annotation.Authorization;
+import com.zixishi.zhanwei.config.authorization.annotation.CurrentUser;
 import com.zixishi.zhanwei.config.authorization.annotation.RolePermission;
 import com.zixishi.zhanwei.dto.ClockListDTO;
 import com.zixishi.zhanwei.dto.ListDTO;
 import com.zixishi.zhanwei.mapper.ClockMapper;
+import com.zixishi.zhanwei.model.Account;
 import com.zixishi.zhanwei.model.Clock;
 import com.zixishi.zhanwei.service.ClockService;
 import com.zixishi.zhanwei.util.HttpResult;
@@ -42,7 +44,7 @@ public class ClockController {
     @Authorization
     @PostMapping("/clock/searchClcok")
 //    @RolePermission(value = {"用户","管理员","超级管理员"})
-    public RestResult searchClcok(@RequestBody JSONObject jsonObject) {
+    public RestResult searchClcok(@RequestBody JSONObject jsonObject, @CurrentUser Account account) {
         LinkedHashMap pageable1 = (LinkedHashMap) jsonObject.get("pageable");
         Integer page = (Integer) pageable1.get("page");
         Integer size = (Integer) pageable1.get("size");
@@ -54,8 +56,8 @@ public class ClockController {
         List<ClockListDTO> clockListDTOS = new ArrayList<>();
         if(isComment) {
             //已评价
-            List<Clock> clockList = PageHelper.startPage(pageable.getPage(),pageable.getSize()).doSelectPage(()->clockMapper.searchHaveComment());
-            Long total = clockMapper.countHaveComment();
+            List<Clock> clockList = PageHelper.startPage(pageable.getPage(),pageable.getSize()).doSelectPage(()->clockMapper.searchHaveComment(account.getId()));
+            Long total = clockMapper.countHaveComment(account.getId());
             for (Clock clock : clockList) {
                 ClockListDTO clockListDTO = new ClockListDTO();
                 clockListDTO.setSigninTime(clock.getSigninTime());
@@ -70,8 +72,8 @@ public class ClockController {
             listDTO.setTotal(total);
         }else {
             //未评价
-            List<Clock> clockList = PageHelper.startPage(pageable.getPage(),pageable.getSize()).doSelectPage(()->clockMapper.search());
-            Long total = clockMapper.count();
+            List<Clock> clockList = PageHelper.startPage(pageable.getPage(),pageable.getSize()).doSelectPage(()->clockMapper.search(account.getId()));
+            Long total = clockMapper.count(account.getId());
 
             for (Clock clock : clockList) {
                 ClockListDTO clockListDTO = new ClockListDTO();

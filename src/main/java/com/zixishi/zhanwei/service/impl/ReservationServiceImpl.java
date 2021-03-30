@@ -63,24 +63,16 @@ public class ReservationServiceImpl implements ReservationService {
         List<TongJiArea> tongJiAreas = new ArrayList<>();
         int i = 0;
         for (Area area : areas) {
-                   List<Reservation> reservations =  reservationMapper.searchByStartAndEndAndArea(searchStartDate,searchEndDate,area.getId());
+                  //查询成交预约数量
+                   Long   number =  reservationMapper.searchByStartAndEndAndArea(searchStartDate,searchEndDate,area.getId());
 
-                   Double income = 0D;
-                for (Reservation reservation : reservations) {
-                    if(reservation.getHaveUsing()) {
-                        income = income + reservation.getPayAmount();
-                    }else {
-                        income = income + (reservation.getPayAmount()-reservation.getReturnMoney());
-                    }
-
-                }
-                TongJiArea tongJiArea = new TongJiArea();
-                tongJiArea.setAreaId(area.getId());
-                tongJiArea.setValue(income);
-                tongJiArea.setName(area.getName());
-                tongJiArea.setItemStyle(itemStyles.get(i));
-                tongJiAreas.add(tongJiArea);
-                i++;
+                    TongJiArea tongJiArea = new TongJiArea();
+                    tongJiArea.setAreaId(area.getId());
+                    tongJiArea.setValue(number);
+                    tongJiArea.setName(area.getName());
+                    tongJiArea.setItemStyle(itemStyles.get(i));
+                    tongJiAreas.add(tongJiArea);
+                    i++;
         }
         return tongJiAreas;
     }

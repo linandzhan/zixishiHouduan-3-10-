@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zixishi.zhanwei.mapper.PackageOrderMapper">
+    <resultMap id="packageMap" type="packageOrder">
+        <id property="id" column="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="payAmount" column="pay_amount"/>
+        <association property="packageId" column="package_id" javaType="user" select="getPackage">
+            <id property="id" column="id"/>
+            <result property="name" column="name"/>
+            <result property="price" column="price"/>
+            <result property="amount" column="amount"/>
+            <result property="description" column="description"/>
+            <result property="unit" column="unit"/>
+        </association>
+        <association property="userId" column="user_id" javaType="package" select="getUser">
+            <id property="id" column="id"/>
+            <result property="username" column="username"/>
+            <result property="phone" column="phone"/>
+            <result property="avator" column="avator"/>
+            <result property="createTime" column="create_time"/>
+            <result property="gender" column="gender"/>
+            <result property="balance" column="balance"/>
+            <result property="password" column="password"/>
+        </association>
+    </resultMap>
+
+
+    <select id="getPackage" resultType="package">
+        select * from package where id = #{id}}
+    </select>
+
+
+    <select id="getUser" resultType="user">
+        select * from user where id = #{id}
+    </select>
+</mapper>

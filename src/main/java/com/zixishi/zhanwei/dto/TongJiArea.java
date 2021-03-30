@@ -6,7 +6,7 @@ import lombok.Data;
 public class TongJiArea {
     private Long areaId;
 
-    private Double value;
+    private Long value;
 
     private String name;
 
